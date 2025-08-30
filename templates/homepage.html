@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทีวีออนไลน์ TVHUB - หน้าแรก</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Custom Bootstrap Styling -->
+    <style>
+        /* Custom colors for badges */
+        .bg-pink {
+            background-color: #e91e63 !important;
+        }
+
+        /* Enhanced card hover effects */
+        .card {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Custom nav-pills styling */
+        .nav-pills .nav-link {
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 0 2px;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+        }
+
+        /* Enhanced navbar */
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Smooth animations */
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Badge enhancements */
+        .badge {
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        /* Footer enhancements */
+        footer a:hover {
+            transform: scale(1.2);
+            transition: transform 0.2s;
+        }
+
+        /* News buttons styling */
+        .btn-outline-secondary {
+            margin: 5px;
+            border-radius: 25px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover i {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="bi bi-tv me-2"></i>TVHUB.ONLINE
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/programs">
+                            <i class="bi bi-list-ul me-1"></i>รายการทั้งหมด
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">
+                            <i class="bi bi-newspaper me-1"></i>ข่าวบันเทิง
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/schedule">
+                            <i class="bi bi-calendar-event me-1"></i>ผังรายการ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/engage">
+                            <i class="bi bi-people me-1"></i>กิจกรรม
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/station">
+                            <i class="bi bi-info-circle me-1"></i>ข้อมูลสถานี
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Container -->
+    <div class="container my-4">
+        <!-- Category Tabs -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4 text-center">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>หมวดหมู่รายการ
+                </h2>
+
+                <!-- Bootstrap Pills Navigation -->
+                <ul class="nav nav-pills nav-fill mb-4" id="categoryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="news-tab" data-bs-toggle="pill"
+                            data-bs-target="#news-category" type="button" role="tab">
+                            <i class="bi bi-newspaper"></i>
+                            <span class="d-none d-md-inline ms-2">หนังสือพิมพ์</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="entertainment-tab" data-bs-toggle="pill"
+                            data-bs-target="#entertainment-category" type="button" role="tab">
+                            <i class="bi bi-film"></i>
+                            <span class="d-none d-md-inline ms-2">บันเทิง</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="live-tab" data-bs-toggle="pill" data-bs-target="#live-category"
+                            type="button" role="tab">
+                            <i class="bi bi-broadcast"></i>
+                            <span class="d-none d-md-inline ms-2">สด</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="drama-tab" data-bs-toggle="pill" data-bs-target="#drama-category"
+                            type="button" role="tab">
+                            <i class="bi bi-masks-theater"></i>
+                            <span class="d-none d-md-inline ms-2">ละคร</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="variety-tab" data-bs-toggle="pill"
+                            data-bs-target="#variety-category" type="button" role="tab">
+                            <i class="bi bi-emoji-laughing"></i>
+                            <span class="d-none d-md-inline ms-2">วาไรตี้</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sports-tab" data-bs-toggle="pill" data-bs-target="#sports-category"
+                            type="button" role="tab">
+                            <i class="bi bi-trophy"></i>
+                            <span class="d-none d-md-inline ms-2">กีฬา</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="kids-tab" data-bs-toggle="pill" data-bs-target="#kids-category"
+                            type="button" role="tab">
+                            <i class="bi bi-balloon-heart"></i>
+                            <span class="d-none d-md-inline ms-2">เด็ก</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="music-tab" data-bs-toggle="pill" data-bs-target="#music-category"
+                            type="button" role="tab">
+                            <i class="bi bi-music-note-beamed"></i>
+                            <span class="d-none d-md-inline ms-2">เพลง</span>
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="lifestyle-tab" data-bs-toggle="pill"
+                            data-bs-target="#lifestyle-category" type="button" role="tab">
+                            <i class="bi bi-house-heart"></i>
+                            <span class="d-none d-md-inline ms-2">ไลฟ์สไตล์</span>
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="categoryTabContent">
+                    <!-- News Category -->
+                    <div class="tab-pane fade show active" id="news-category" role="tabpanel"
+                        aria-labelledby="news-tab">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <a class="btn btn-outline-danger" href="https://www.thairath.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-newspaper me-1"></i>ไทยรัฐ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.khaosod.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-newspaper me-1"></i>ข่าวสด
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.matichon.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-newspaper me-1"></i>มติชน
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.manager.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-briefcase me-1"></i>ผู้จัดการ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.dailynews.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-calendar-day me-1"></i>เดลินิวส์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.sanook.com/news/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-emoji-smile me-1"></i>สนุก
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.komchadluek.net/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-eye me-1"></i>คมชัดลึก
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.posttoday.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-mailbox me-1"></i>โพสต์ทูเดย์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.bangkokbiznews.com/"
+                                        type="button" target="_blank">
+                                        <i class="bi bi-building me-1"></i>กรุงเทพธุรกิจ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.naewna.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-newspaper me-1"></i>แนวหน้า
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.springnews.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-flower1 me-1"></i>สปริงนิวส์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thaipbs.or.th/news"
+                                        type="button" target="_blank">
+                                        <i class="bi bi-broadcast me-1"></i>ไทยพีบีเอส
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.tnn24.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-tv me-1"></i>TNN24
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.mcot.net/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-broadcast-pin me-1"></i>MCOT
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.bbc.com/thai" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-globe me-1"></i>BBC ไทย
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.voathai.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-mic me-1"></i>VOA ไทย
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.prachachat.net/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-people me-1"></i>ประชาชาติ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thaipost.net/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-envelope me-1"></i>ไทยโพสต์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.siamrath.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-flag me-1"></i>สยามรัฐ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.workpointnews.com/"
+                                        type="button" target="_blank">
+                                        <i class="bi bi-briefcase-fill me-1"></i>เวิร์คพอยท์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.innnews.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-wifi me-1"></i>INN News
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thansettakij.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-graph-up-arrow me-1"></i>ฐานเศรษฐกิจ
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.banmuang.co.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-house-door me-1"></i>บ้านเมือง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.khaosod-online.com/"
+                                        type="button" target="_blank">
+                                        <i class="bi bi-laptop me-1"></i>ข่าวสดออนไลน์
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thaireform.org/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>ไทยปฏิรูป
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.beartai.com/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-globe-asia-australia me-1"></i>Beartai
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thaihealth.or.th/" type="button"
+                                        target="_blank">
+                                        <i class="bi bi-heart-pulse me-1"></i>สสส.
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entertainment Category -->
+                    <div class="tab-pane fade" id="entertainment-category" role="tabpanel"
+                        aria-labelledby="entertainment-tab">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <a class="btn btn-outline-danger" href="https://www.sanook.com/movie/"
+                                        target="_blank">
+                                        <i class="bi bi-film me-1"></i>Sanook Movie
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.mthai.com/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-stars me-1"></i>MThai บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.daradaily.com/" target="_blank">
+                                        <i class="bi bi-person-bounding-box me-1"></i>DaraDaily
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.nationtv.tv/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-camera-reels me-1"></i>Nation บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.trueid.net/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-play-btn me-1"></i>TrueID บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.thairath.co.th/entertain"
+                                        target="_blank">
+                                        <i class="bi bi-music-note-list me-1"></i>ไทยรัฐ บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.matichon.co.th/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-mic me-1"></i>มติชน บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.khaosod.co.th/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-emoji-laughing me-1"></i>ข่าวสด บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger"
+                                        href="https://www.workpointtoday.com/entertainment/" target="_blank">
+                                        <i class="bi bi-tv me-1"></i>WorkpointToday
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.gmm25.com/news/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-music-player me-1"></i>GMM25 บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.one31.net/news/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-music-note-beamed me-1"></i>ONE31 บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.bugaboo.tv/entertainment"
+                                        target="_blank">
+                                        <i class="bi bi-film me-1"></i>Bugaboo บันเทิง
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.majorcineplex.com/news"
+                                        target="_blank">
+                                        <i class="bi bi-ticket-perforated me-1"></i>Major Cineplex
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.sfcinemacity.com/news"
+                                        target="_blank">
+                                        <i class="bi bi-ticket-detailed me-1"></i>SFCinema
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="https://www.bioscopemag.com/"
+                                        target="_blank">
+                                        <i class="bi bi-journal-richtext me-1"></i>Bioscope Magazine
+                                    </a>
+                                    <a class="btn btn-outline-danger"
+                                        href="https://www.beartai.com/lifestyle/entertainment" target="_blank">
+                                        <i class="bi bi-globe-asia-australia me-1"></i>Beartai บันเทิง
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Category -->
+                    <div class="tab-pane fade" id="live-category" role="tabpanel" aria-labelledby="live-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/3hd.png" class="card-img-top" alt="ช่อง 3 HD"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">ช่อง 3 HD</h5>
+                                        <p class="card-text">รายการสดจากช่อง 3</p>
+                                        <a href="/live/ch3" class="btn btn-primary">ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/channel5.png" class="card-img-top" alt="ช่อง 5 HD"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">ช่อง 5 HD</h5>
+                                        <p class="card-text">รายการสดจากช่อง 5</p>
+                                        <a href="/live/ch5" class="btn btn-primary">ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/ch7-hd.png" class="card-img-top" alt="ช่อง 7 HD"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">ช่อง 7 HD</h5>
+                                        <p class="card-text">รายการสดจากช่อง 7</p>
+                                        <a href="/live/ch7" class="btn btn-primary">ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Categories (Drama, Variety, Sports, Kids, Music, Lifestyle) -->
+                    <div class="tab-pane fade" id="drama-category" role="tabpanel" aria-labelledby="drama-tab">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="d-flex flex-wrap justify-content-center gap-2">
+                                    <a class="btn btn-outline-primary" href="https://www.ch3plus.com/drama"
+                                        target="_blank">
+                                        <i class="bi bi-play-btn me-1"></i>CH3+ ละครย้อนหลัง
+                                    </a>
+                                    <a class="btn btn-outline-primary" href="https://www.one31.net/archives/drama"
+                                        target="_blank">
+                                        <i class="bi bi-tv me-1"></i>ONE31 ละครย้อนหลัง
+                                    </a>
+                                    <a class="btn btn-outline-primary" href="https://www.oned.net/home  "
+                                        target="_blank">
+                                        <i class="bi bi-film me-1"></i>GMM25 ละครย้อนหลัง
+                                    </a>
+                                    <a class="btn btn-outline-primary" href="https://www.bugaboo.tv/drama"
+                                        target="_blank">
+                                        <i class="bi bi-film me-1"></i>Bugaboo ละครย้อนหลัง
+                                    </a>
+                                    <a class="btn btn-outline-primary" href="https://www.thairath.co.th/entertain/drama"
+                                        target="_blank">
+                                        <i class="bi bi-masks-theater me-1"></i>ไทยรัฐ ละครย้อนหลัง
+                                    </a>
+
+
+                                    <a class="btn btn-outline-primary" href="https://www.thaitv3.com/drama"
+                                        target="_blank">
+                                        <i class="bi bi-play-circle me-1"></i>ไทยทีวี 3 ละครย้อนหลัง
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="variety-category" role="tabpanel" aria-labelledby="variety-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/variety1.jpg" class="card-img-top" alt="วาไรตี้"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">รายการวาไรตี้</h5>
+                                        <p class="card-text">รายการตลกและความบันเทิง</p>
+                                        <span class="badge bg-warning">FUN</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="sports-category" role="tabpanel" aria-labelledby="sports-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/sports1.jpg" class="card-img-top" alt="กีฬา"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">ข่าวกีฬา</h5>
+                                        <p class="card-text">ข่าวและผลการแข่งขันกีฬา</p>
+                                        <span class="badge bg-success">LIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="kids-category" role="tabpanel" aria-labelledby="kids-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/kids1.jpg" class="card-img-top" alt="รายการเด็ก"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">รายการเด็ก</h5>
+                                        <p class="card-text">การ์ตูนและรายการเด็กน่าดู</p>
+                                        <span class="badge bg-info">KIDS</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="music-category" role="tabpanel" aria-labelledby="music-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/music1.jpg" class="card-img-top" alt="เพลง"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">เพลงใหม่ล่าสุด</h5>
+                                        <p class="card-text">เพลงฮิตและศิลปินยอดนิยม</p>
+                                        <span class="badge bg-primary">NEW</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="lifestyle-category" role="tabpanel" aria-labelledby="lifestyle-tab">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="/static/img/lifestyle1.jpg" class="card-img-top" alt="ไลฟ์สไตล์"
+                                        style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">ไลฟ์สไตล์</h5>
+                                        <p class="card-text">การใช้ชีวิต สุขภาพ และความงาม</p>
+                                        <span class="badge bg-secondary">TREND</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Additional Bootstrap Sections -->
+    <div class="container my-5">
+
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4 text-center">
+                    <i class="bi bi-tv me-2"></i>ช่องทีวีออนไลน์
+                </h3>
+                <!-- TV Channel Tabs -->
+                <ul class="nav nav-tabs justify-content-center mb-3" id="tvTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="thai-tv-tab" data-bs-toggle="tab" data-bs-target="#thai-tv"
+                            type="button" role="tab">
+                            <i class="bi bi-house-door me-1"></i>ทีวีไทย
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="intl-tv-tab" data-bs-toggle="tab" data-bs-target="#intl-tv"
+                            type="button" role="tab">
+                            <i class="bi bi-globe me-1"></i>ทีวีต่างประเทศ
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sports-tv-tab" data-bs-toggle="tab" data-bs-target="#sports-tv"
+                            type="button" role="tab">
+                            <i class="bi bi-trophy me-1"></i>กีฬา
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="tvTabContent">
+                    <!-- Thai TV Tab -->
+                    <div class="tab-pane fade show active" id="thai-tv" role="tabpanel" aria-labelledby="thai-tv-tab">
+                        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center">
+
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/3hd.png" class="card-img-top p-3" alt="ช่อง 3 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 3 HD</h6>
+                                        <p>3 HD</p>
+                                        <a href="https://ch3plus.com/live" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/3hd.png" class="card-img-top p-3" alt="ช่อง 3 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 3 HD</h6>
+                                        <p>TrueID</p>
+                                        <a href="https://tv.trueid.net/th-th/live/ch3-hd"
+                                            class="btn btn-outline-primary btn-sm"><i class="bi bi-play-fill me-1"
+                                                target="_blank"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/3hd.png" class="card-img-top p-3" alt="ช่อง 3 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 3 HD</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/ch3" class="btn btn-outline-primary btn-sm" target="_blank"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/channel5.png" class="card-img-top p-3" alt="ช่อง 5 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 5 HD</h6>
+                                        <p>ททบ 5</p>
+                                        <a href="https://thaitv5hd.com/web/live.php" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/channel5.png" class="card-img-top p-3" alt="ช่อง 5 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 5 HD</h6>
+                                        <p>TrueID</p>
+                                        <a href="https://tv.trueid.net/th-th/live/ch5" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/channel5.png" class="card-img-top p-3" alt="ช่อง 5 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 5 HD</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/ch5" target="_blank" class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/ch7-hd.png" class="card-img-top p-3" alt="ช่อง 7 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 7 HD</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/ch7" class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/ch7-hd.png" class="card-img-top p-3" alt="ช่อง 7 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 7 HD</h6>
+                                        <p>TrueID</p>
+                                        <a href="https://tv.trueid.net/th-th/live/ch7-hd" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/ch7-hd.png" class="card-img-top p-3" alt="ช่อง 7 HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ช่อง 7 HD</h6>
+                                        <p>ช่อง 7</p>
+                                        <a href="https://www.ch7.com/live.html"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/mcot-hd.png" class="card-img-top p-3" alt="MCOT HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">MCOT HD</h6>
+                                        <p>MCOT</p>
+                                        <a href="https://tv.mcot.net/mcothd" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/mcot-hd.png" class="card-img-top p-3" alt="MCOT HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">MCOT HD</h6>
+                                        <p>TrueID</p>
+                                        <a href="https://tv.mcot.net/mcothd" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/mcot-hd.png" class="card-img-top p-3" alt="MCOT HD"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">MCOT HD</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/mcot" target="_blank" class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/thaipbs.png" class="card-img-top p-3" alt="ไทยพีบีเอส"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ไทยพีบีเอส</h6>
+                                        <p>Thai PBS</p>
+                                        <a href="https://www.thaipbs.or.th/live"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/thaipbs.png" class="card-img-top p-3" alt="ไทยพีบีเอส"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ไทยพีบีเอส</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/thaipbs" class="btn btn-outline-primary btn-sm"
+                                            target="_blank"><i class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/thaipbs.png" class="card-img-top p-3" alt="ไทยพีบีเอส"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ไทยพีบีเอส</h6>
+                                        <p>TrueID</p>
+                                        <a href="https://tv.trueid.net/th-th/live/thaipbs" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/tnn24.png" class="card-img-top p-3" alt="TNN24"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">TNN24</h6>
+                                        <p>TV HUB</p>
+                                        <a href="/live/tnn24" target="_blank" class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- International TV Tab -->
+                    <div class="tab-pane fade" id="intl-tv" role="tabpanel" aria-labelledby="intl-tv-tab">
+                        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center">
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/bbc.png" class="card-img-top p-3" alt="BBC World"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">BBC World</h6>
+                                        <a href="https://www.bbc.com/news" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/cnn.png" class="card-img-top p-3" alt="CNN"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">CNN</h6>
+                                        <a href="https://edition.cnn.com/live" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/nhk.png" class="card-img-top p-3" alt="NHK World"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">NHK World</h6>
+                                        <a href="https://www3.nhk.or.jp/nhkworld/en/live/" target="_blank"
+                                            class="btn btn-outline-primary btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sports TV Tab -->
+                    <div class="tab-pane fade" id="sports-tv" role="tabpanel" aria-labelledby="sports-tv-tab">
+                        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center">
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/tsports.png" class="card-img-top p-3" alt="T Sports"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">T Sports</h6>
+                                        <a href="https://www.tsportschannel.com/live" target="_blank"
+                                            class="btn btn-outline-success btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card h-100 shadow-sm text-center">
+                                    <img src="/static/img/espn.png" class="card-img-top p-3" alt="ESPN"
+                                        style="height: 80px; object-fit: contain;">
+                                    <div class="card-body">
+                                        <h6 class="card-title">ESPN</h6>
+                                        <a href="https://www.espn.com/watch/" target="_blank"
+                                            class="btn btn-outline-success btn-sm"><i
+                                                class="bi bi-play-fill me-1"></i>ดูสด</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Latest Updates -->
+        <!-- <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4">
+                    <i class="bi bi-clock-history me-2"></i>อัปเดตล่าสุด
+                </h3>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+                            <img src="/static/img/update1.jpg" class="card-img-top" alt="อัปเดต 1"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">ข่าวด่วน: เหตุการณ์สำคัญ</h6>
+                                <small class="text-muted">5 นาทีที่แล้ว</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+                            <img src="/static/img/update2.jpg" class="card-img-top" alt="อัปเดต 2"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">รายการใหม่เริ่มออกอากาศ</h6>
+                                <small class="text-muted">15 นาทีที่แล้ว</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+                            <img src="/static/img/update3.jpg" class="card-img-top" alt="อัปเดต 3"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">สัมภาษณ์พิเศษ</h6>
+                                <small class="text-muted">30 นาทีที่แล้ว</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card h-100">
+                            <img src="/static/img/update4.jpg" class="card-img-top" alt="อัปเดต 4"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="card-title">กิจกรรมพิเศษ</h6>
+                                <small class="text-muted">1 ชั่วโมงที่แล้ว</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+
+
+    </div>
+
+    <!-- Bootstrap Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>
+                        <i class="bi bi-tv me-2"></i>TVHUB.ONLINE
+                    </h5>
+                    <p class="mb-0">สถานีทีวีออนไลน์ครบครันทุกรายการ</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2025 สถานีทีวีออนไลน์ สงวนลิขสิทธิ์</p>
+                    <div class="mt-2">
+                        <a href="#" class="text-light me-3">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" class="text-light me-3">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="#" class="text-light me-3">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                        <a href="#" class="text-light">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Bootstrap handles tab functionality automatically
+        // Additional custom JavaScript can be added here if needed
+
+        // Optional: Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Optional: Initialize tooltips if needed
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+
+</html>

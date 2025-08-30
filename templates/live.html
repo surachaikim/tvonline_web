@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{name}}- ดูสดออนไลน์</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
+
+        .navbar {
+            background: linear-gradient(45deg, #1e3c72, #2a5298) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #667eea, #764ba2) !important;
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+        }
+
+        .live-indicator {
+            animation: pulse 2s infinite;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .quality-btn.active {
+            background: linear-gradient(45deg, #28a745, #20c997) !important;
+            border-color: #28a745 !important;
+            color: white !important;
+        }
+
+        .btn-outline-secondary {
+            border-radius: 25px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .viewer-count {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        footer {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .program-info {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .channel-logo-live {
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-js {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .social-links a {
+            color: #fff;
+            margin: 0 10px;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+            color: #74b9ff;
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+        }
+
+        .stats-card h6 {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .stats-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #74b9ff;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">{{ name }} - ดูสดออนไลน์</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+    </nav>
+
+    <main>
+        <div class="container mb-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="mb-0"><i class="bi bi-tv"></i> {{ name }} - กำลังออกอากาศ</h2>
+                        </div>
+                        <div class="card-body bg-light">
+                            <!-- Video Player -->
+                            <div class="ratio mb-3">
+                                <video id="live-player" class="video-js vjs-default-skin" controls preload="auto"
+                                    width="100%" height="100%" data-setup="{}">
+                                    <source src="{{ stream_link }}" type="application/x-mpegURL">
+                                    <p class="vjs-no-js">
+                                        เบราว์เซอร์ของคุณไม่รองรับ HTML5 video.
+                                        <a href="https://videojs.com/html5-video-support/"
+                                            target="_blank">อัปเกรดเบราว์เซอร์ของคุณ</a>
+                                    </p>
+                                </video>
+                            </div>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-2 text-center">
+                                    <img src="{{ logo }}" alt="{{ name }}"
+                                        class="img-fluid rounded-circle border border-2" style="max-width:80px;">
+                                </div>
+                                <div class="col-md-7">
+                                    <h3 id="channel-name" class="mb-1 fw-bold">{{ name }}</h3>
+                                    <p id="channel-description" class="mb-0 text-muted">{{ description }}</p>
+                                    <span class="live-indicator badge bg-danger fs-6" id="live-status">{{ '🔴
+                                        กำลังถ่ายทอดสด' if isLive else '⏳ กำลังเชื่อมต่อ' }}</span>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 class="mb-2">คุณภาพการสตรีม:</h6>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-outline-primary quality-btn active"
+                                            onclick="changeQuality('hd')">HD</button>
+                                        <button class="btn btn-outline-primary quality-btn"
+                                            onclick="changeQuality('sd')">SD</button>
+                                        <button class="btn btn-outline-primary quality-btn"
+                                            onclick="changeQuality('low')">Low</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded p-3 mb-2 shadow-sm">
+                                <h5 class="mb-2"><i class="bi bi-clock-history"></i> รายการกำลังออกอากาศ:</h5>
+                                <div class="d-flex align-items-center">
+                                    <span class="program-time badge bg-info me-2"
+                                        id="program-time">ไม่มีข้อมูลรายการ</span>
+                                    <span class="program-name fw-bold" id="program-name">ไม่มีข้อมูลรายการ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-primary text-white text-center py-3 mt-4" style="margin-top:auto;">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 สถานีทีวีออนไลน์ - {{ name }}</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+
+        // Initialize Video.js player
+        var player = videojs('live-player', {
+            fluid: true,
+            responsive: true,
+            html5: {
+                hls: {
+                    enableLowInitialPlaylist: true,
+                    smoothQualityChange: true,
+                    overrideNative: true
+                }
+            }
+        });
+
+        // Player ready callback
+        player.ready(function () {
+            console.log('Player is ready');
+            sendViewerData('player_ready');
+
+            // Auto-play if allowed by browser
+            player.play().then(() => {
+                sendViewerData('play_started');
+            }).catch(e => {
+                console.log('Auto-play prevented:', e);
+                sendViewerData('autoplay_blocked', { error: e.message });
+            });
+        });
+
+        // Player event listeners
+        player.on('play', () => {
+            sendViewerData('play');
+            updateLiveStatus(true);
+        });
+
+        player.on('pause', () => {
+            sendViewerData('pause');
+            updateLiveStatus(false);
+        });
+
+        player.on('ended', () => {
+            sendViewerData('ended');
+        });
+
+        player.on('error', (e) => {
+            sendViewerData('error', { error: e.message });
+        });
+
+        player.on('loadstart', () => {
+            sendViewerData('load_start');
+        });
+
+        player.on('canplay', () => {
+            sendViewerData('can_play');
+        });
+
+        // Update live status indicator
+        function updateLiveStatus(isPlaying) {
+            const indicator = document.querySelector('.live-indicator');
+            if (isPlaying) {
+                indicator.style.animation = 'pulse 2s infinite';
+                indicator.textContent = '🔴 LIVE';
+            } else {
+                indicator.style.animation = 'none';
+                indicator.textContent = '⏸️ PAUSED';
+            }
+        }
+
+        // Control functions with analytics
+        function changeQuality(quality) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.quality-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            streamConfig.quality = quality;
+            sendViewerData('quality_change', { quality: quality });
+
+            console.log('Quality changed to:', quality);
+        }
+
+        function toggleFullscreen() {
+            if (player.isFullscreen()) {
+                player.exitFullscreen();
+                sendViewerData('fullscreen_exit');
+            } else {
+                player.requestFullscreen();
+                sendViewerData('fullscreen_enter');
+            }
+        }
+
+        function toggleMute() {
+            if (player.muted()) {
+                player.muted(false);
+                sendViewerData('unmute');
+            } else {
+                player.muted(true);
+                sendViewerData('mute');
+            }
+        }
+
+        function refreshStream() {
+            sendViewerData('refresh_stream');
+
+            // Use stream URL from backend if available
+            const streamUrl = streamConfig.streamUrl || '{{ stream_link }}';
+
+            player.src({
+                src: streamUrl,
+                type: 'application/x-mpegURL'
+            });
+            player.load();
+            player.play();
+        }
+
+        function shareStream() {
+            sendViewerData('share_attempt');
+            if (navigator.share) {
+                navigator.share({
+                    title: '{{ name }} - ดูสดออนไลน์',
+                    text: 'ดู{{ name }} สดออนไลน์',
+                    url: window.location.href
+                }).then(() => {
+                    sendViewerData('share_success');
+                });
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                alert('ลิงก์ถูกคัดลอกแล้ว!');
+                sendViewerData('share_clipboard');
+            }
+        }
+
+        // Real-time viewer count
+        let viewerCount = 1234;
+        function updateViewerCount() {
+            // Simulate realistic viewer fluctuation
+            const change = Math.floor(Math.random() * 20) - 10;
+            viewerCount = Math.max(100, viewerCount + change);
+            document.getElementById('viewer-count').textContent = viewerCount.toLocaleString();
+
+            // Send viewer count update to backend
+            sendViewerData('viewer_count_update', { count: viewerCount });
+        }
+
+        // Heart beat to track active viewers
+        function sendHeartbeat() {
+            const currentTime = player.currentTime();
+            const duration = player.duration();
+            const buffered = player.buffered();
+
+            sendViewerData('heartbeat', {
+                currentTime: currentTime,
+                duration: duration,
+                bufferedLength: buffered.length,
+                volume: player.volume(),
+                muted: player.muted(),
+                quality: streamConfig.quality
+            });
+        }
+
+        // Track page visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                sendViewerData('page_hidden');
+            } else {
+                sendViewerData('page_visible');
+            }
+        });
+
+        // Track when user leaves
+        window.addEventListener('beforeunload', () => {
+            sendViewerData('page_unload');
+        });
+
+        // Initialize session
+        sendViewerData('session_start', {
+            referrer: document.referrer,
+            screenSize: `${screen.width}x${screen.height}`,
+            windowSize: `${window.innerWidth}x${window.innerHeight}`
+        });
+
+        // Setup intervals
+        setInterval(updateViewerCount, 30000); // Update viewer count every 30 seconds
+        setInterval(sendHeartbeat, 60000); // Send heartbeat every minute
+
+        // Real-time program schedule update
+        function updateCurrentProgram() {
+            fetch('/api/current-program/ch5')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.time && data.program) {
+                        document.getElementById('program-time').textContent = data.time;
+                        document.getElementById('program-name').textContent = data.program;
+                        channelData.currentProgram = {
+                            time: data.time,
+                            name: data.program
+                        };
+                    }
+                })
+                .catch(err => {
+                    console.log('Program update error:', err);
+                    // Fallback to default values
+                    document.getElementById('program-time').textContent = 'ไม่ทราบเวลา';
+                    document.getElementById('program-name').textContent = 'ไม่มีข้อมูลรายการ';
+                });
+        }
+
+        // Initialize page data
+        async function initializePage() {
+            // Load initial data
+            await loadChannelData();
+            await loadViewerCount();
+            updateCurrentProgram();
+
+            // Set up intervals
+            setInterval(loadViewerCount, 30000); // Update viewer count every 30 seconds
+            setInterval(sendHeartbeat, 60000); // Send heartbeat every minute
+            setInterval(updateCurrentProgram, 300000); // Update program info every 5 minutes
+        }
+
+        // Setup intervals (moved to initializePage)
+        // setInterval(updateViewerCount, 30000); // Update viewer count every 30 seconds
+        // setInterval(sendHeartbeat, 60000); // Send heartbeat every minute
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+
+</html>

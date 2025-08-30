@@ -1,0 +1,6 @@
+<!-- Placeholder image for celebrity news -->
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#e91e63"/>
+  <text x="150" y="90" font-family="Arial" font-size="18" fill="white" text-anchor="middle">ข่าวดารา</text>
+  <text x="150" y="120" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Celebrity</text>
+</svg>
