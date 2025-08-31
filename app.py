@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, Response, url_for
 import json
 from datetime import datetime
 import os
@@ -12,7 +12,11 @@ analytics_data = []
 
 @app.route('/')
 def homepage():
-    return render_template('homepage.html')
+    return render_template(
+        'homepage.html',
+        canonical_url=request.base_url,
+        meta_description='ดูทีวีออนไลน์ สด ครบทุกช่อง ข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ รวมลิงก์จากช่องทางทางการ ดูสดได้ตลอด 24 ชั่วโมง',
+    )
 
 
 @app.route('/live/ch3')
@@ -28,7 +32,7 @@ def live_ch3():
         'isLive': True
     }
     
-    return render_template('live.html', **channel_data)
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
 @app.route('/live/ch5')
 def live_ch5():
@@ -43,7 +47,7 @@ def live_ch5():
         'isLive': True
     }
     
-    return render_template('live.html', **channel_data)
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
 @app.route('/live/ch7')
 def live_ch7():
@@ -58,7 +62,7 @@ def live_ch7():
         'isLive': True
     }
     
-    return render_template('live.html', **channel_data)
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
 @app.route('/live/mcot')
 def live_mcot():
@@ -73,7 +77,7 @@ def live_mcot():
         'isLive': True
     }
     
-    return render_template('live.html', **channel_data)
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
 
 @app.route('/live/thaipbs')
@@ -89,7 +93,60 @@ def live_thaipbs():
         'isLive': True
     }
     
-    return render_template('live.html', **channel_data)
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+# Global template context for SEO/site info
+@app.context_processor
+def inject_site_meta():
+    base_url = request.url_root.rstrip('/') if request else ''
+    return {
+        'site_name': 'TVHUB.ONLINE',
+        'base_url': base_url,
+        'full_url': request.base_url if request else '',
+    }
+
+
+def _sitemap_urls():
+    today = datetime.utcnow().date().isoformat()
+    urls = [
+        {'loc': url_for('homepage', _external=True), 'priority': '1.0', 'changefreq': 'daily', 'lastmod': today},
+        {'loc': url_for('live_ch3', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
+        {'loc': url_for('live_ch5', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
+        {'loc': url_for('live_ch7', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
+        {'loc': url_for('live_mcot', _external=True), 'priority': '0.7', 'changefreq': 'weekly', 'lastmod': today},
+        {'loc': url_for('live_thaipbs', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
+    ]
+    return urls
+
+
+@app.route('/sitemap.xml')
+def sitemap():
+    urls = _sitemap_urls()
+    xml_parts = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    ]
+    for u in urls:
+        xml_parts.append('<url>')
+        xml_parts.append(f'<loc>{u["loc"]}</loc>')
+        xml_parts.append(f'<lastmod>{u["lastmod"]}</lastmod>')
+        xml_parts.append(f'<changefreq>{u["changefreq"]}</changefreq>')
+        xml_parts.append(f'<priority>{u["priority"]}</priority>')
+        xml_parts.append('</url>')
+    xml_parts.append('</urlset>')
+    xml = '\n'.join(xml_parts)
+    return Response(xml, mimetype='application/xml')
+
+
+@app.route('/robots.txt')
+def robots():
+    sitemap_url = url_for('sitemap', _external=True)
+    content = f"""User-agent: *
+Allow: /
+Sitemap: {sitemap_url}
+"""
+    return Response(content, mimetype='text/plain')
 
 
 if __name__ == '__main__':

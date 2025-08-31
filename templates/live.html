@@ -4,14 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{name}}- ดูสดออนไลน์</title>
+    <title>{{ name }} | ดูสดออนไลน์ | TVHUB</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/static/img/tvhublogo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/static/img/tvhublogo.png">
     <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet">
 
-    <!-- Custom Styles -->
+        <!-- SEO -->
+        <meta name="description" content="ดู {{ name }} ถ่ายทอดสดออนไลน์ - {{ description }}">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ canonical_url or request.base_url }}">
+        <meta property="og:type" content="video.other">
+        <meta property="og:site_name" content="{{ site_name }}">
+        <meta property="og:title" content="{{ name }} | ดูสดออนไลน์">
+        <meta property="og:description" content="ดู {{ name }} ถ่ายทอดสดออนไลน์ - {{ description }}">
+        <meta property="og:url" content="{{ canonical_url or request.base_url }}">
+        <meta property="og:image" content="{{ url_for('static', filename=(logo|replace('/static/','')) , _external=True) if logo else url_for('static', filename='img/thaipbs.png', _external=True) }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ name }} | ดูสดออนไลน์">
+        <meta name="twitter:description" content="ดู {{ name }} ถ่ายทอดสดออนไลน์ - {{ description }}">
+        <meta name="twitter:image" content="{{ url_for('static', filename=(logo|replace('/static/','')), _external=True) if logo else url_for('static', filename='img/thaipbs.png', _external=True) }}">
+
+        <!-- JSON-LD -->
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            "name": "{{ name }}",
+            "description": "{{ description }}",
+            "thumbnailUrl": ["{{ url_for('static', filename=(logo|replace('/static/','')), _external=True) if logo else url_for('static', filename='img/thaipbs.png', _external=True) }}"],
+            "embedUrl": "{{ canonical_url or request.base_url }}",
+            "publisher": {
+                "@type": "Organization",
+                "name": "{{ site_name }}"
+            }
+        }
+        </script>
+
+        <!-- Custom Styles -->
     <style>
         html,
         body {
@@ -19,7 +54,8 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #111;
+            color: #fff;
             min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -31,18 +67,19 @@
         }
 
         .navbar {
-            background: linear-gradient(45deg, #1e3c72, #2a5298) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #000 !important;
+            color: #fff;
+            border-bottom: 1px solid #222;
         }
 
         .card {
-            border: none;
+            border: 1px solid #2a2a2a;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: none;
+            background: #1b1b1b;
+            color: #fff;
         }
 
         .card:hover {
@@ -51,7 +88,7 @@
         }
 
         .card-header {
-            background: linear-gradient(45deg, #667eea, #764ba2) !important;
+            background: #b71c1c !important;
             border-radius: 15px 15px 0 0 !important;
             border: none;
         }
@@ -76,9 +113,9 @@
         }
 
         .quality-btn.active {
-            background: linear-gradient(45deg, #28a745, #20c997) !important;
-            border-color: #28a745 !important;
-            color: white !important;
+            background: #b71c1c !important;
+            border-color: #b71c1c !important;
+            color: #fff !important;
         }
 
         .btn-outline-secondary {
@@ -90,35 +127,38 @@
 
         .btn-outline-secondary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
-            background-color: #6c757d;
-            border-color: #6c757d;
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.25);
+            background-color: #b71c1c;
+            border-color: #b71c1c;
+            color: #fff;
         }
 
         .viewer-count {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 10px 20px;
+            background: #b71c1c;
+            color: #fff;
+            padding: 6px 12px;
             border-radius: 25px;
             font-weight: bold;
         }
 
         footer {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: #000;
+            color: #fff;
+            border-top: 1px solid #222;
         }
 
         .program-info {
-            background: linear-gradient(45deg, #74b9ff, #0984e3);
-            color: white;
+            background: #111;
+            color: #fff;
             padding: 15px;
             border-radius: 10px;
             margin-top: 10px;
+            border: 1px solid #2a2a2a;
         }
 
         .channel-logo-live {
             border: 3px solid #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(183, 28, 28, 0.25);
         }
 
         .video-js {
@@ -151,7 +191,7 @@
 
         .social-links a:hover {
             transform: scale(1.2);
-            color: #74b9ff;
+            color: #b71c1c;
         }
 
         .stats-card {
@@ -173,6 +213,29 @@
             font-weight: bold;
             color: #74b9ff;
         }
+
+        /* Theme color overrides for buttons and utility classes */
+        .btn-primary {
+            background: #b71c1c;
+            border-color: #b71c1c;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #981616;
+            border-color: #981616;
+            color: #fff;
+        }
+        .btn-outline-primary {
+            color: #b71c1c;
+            border-color: #b71c1c;
+        }
+        .btn-outline-primary:hover {
+            background: #b71c1c;
+            color: #fff;
+            border-color: #b71c1c;
+        }
+        .text-muted { color: #b0b0b0 !important; }
+        .bg-light { background: #1b1b1b !important; color: #fff !important; }
     </style>
 </head>
 
@@ -219,6 +282,7 @@
                                     <p id="channel-description" class="mb-0 text-muted">{{ description }}</p>
                                     <span class="live-indicator badge bg-danger fs-6" id="live-status">{{ '🔴
                                         กำลังถ่ายทอดสด' if isLive else '⏳ กำลังเชื่อมต่อ' }}</span>
+                                    <span id="viewer-count" class="viewer-count badge rounded-pill ms-2">1,234</span>
                                 </div>
                                 <div class="col-md-3">
                                     <h6 class="mb-2">คุณภาพการสตรีม:</h6>
