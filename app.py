@@ -27,7 +27,7 @@ def live_ch3():
         'channel_id': 'ch3',
         'name': 'ช่อง 3 HD',
         'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 3',
-        'stream_link': 'https://p1.cdn.vet/live/ch3/i/ch3i.m3u8?sid=b5yMjYzMjE5YjI4YmVkNWZhYzE5ZQNGVkZWI2NzE0YzEwZDdm',
+        'stream_link': 'https://lb1-live-mv.v2h-cdn.com/hls/ffae/3hd/3hd.m3u8',
         'logo': '/static/img/3hd.png',
         'isLive': True
     }
@@ -42,7 +42,7 @@ def live_ch5():
         'channel_id': 'ch5',
         'name': 'ช่อง 5 HD',
         'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 5',
-        'stream_link': 'https://p1.cdn.vet/live/ch5/i/ch5i.m3u8?sid=b5yMjYzMjE5YjI4YmVkNWZhYzE5ZQNGVkZWI2NzE0YzEwZDdm',
+        'stream_link': 'https://639bc5877c5fe.streamlock.net/tv5hdlive/tv5hdlive/playlist.m3u8',
         'logo': '/static/img/channel5.png',
         'isLive': True
     }
@@ -95,6 +95,21 @@ def live_thaipbs():
     
     return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
+
+@app.route('/live/MamaHD')
+def live_MamaHD():
+    """Live Channel Mama HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'MamaHD',
+        'name': 'Mama HD',
+        'description': 'สถานีโทรทัศน์ Mama HD',
+        'stream_link': 'http://stv.mediacdn.ru/live/cdn/mama/playlist.m3u8',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
 # Global template context for SEO/site info
 @app.context_processor
