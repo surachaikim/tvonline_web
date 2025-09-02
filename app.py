@@ -111,6 +111,38 @@ def live_MamaHD():
     
     return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
+
+@app.route('/live/FWTOON')
+def live_FWTOON():
+    """Live Channel FWTOON"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'FWTOON',
+        'name': 'FWTOON',
+        'description': 'สถานีโทรทัศน์ FWTOON',
+        'stream_link': 'https://freelive2.inwstream.com:1936/freelive-edge/fwtoon_fw-iptv.stream/chunks.m3u8?nimblesessionid=187607525&wmsAuthSign=c2VydmVyX3RpbWU9OS8yLzIwMjUgNzoxODo1OSBBTSZoYXNoX3ZhbHVlPTBHS25QK1RwVEMvZHpIN2U4YnJ0T2c9PSZ2YWxpZG1pbnV0ZXM9Mg==',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/4sport')
+def live_4sport():
+    """Live Channel 4 Sport"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': '4sport',
+        'name': '4 Sport',
+        'description': 'สถานีโทรทัศน์ 4 Sport',
+        'stream_link': 'https://pepsi.abntv.live/hls/4spstream.m3u8',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
 # Global template context for SEO/site info
 @app.context_processor
 def inject_site_meta():
