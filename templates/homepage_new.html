@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดูทีวีออนไลน์ สด ครบทุกช่อง | TVHUB</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/img/tvhublogo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/static/img/tvhublogo.png">
+
+    <!-- SEO -->
+    <meta name="description"
+        content="{{ meta_description or 'ดูทีวีออนไลน์ สด ครบทุกช่อง รวมข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ พร้อมลิงก์ทางการจากทุกช่อง ดูสดได้ 24 ชั่วโมง' }}">
+    <meta name="keywords"
+        content="ทีวีออนไลน์, ดูทีวีสด, ทีวีไทย, ถ่ายทอดสด, ข่าว, กีฬา, บันเทิง, Thai TV online, live TV">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#b71c1c">
+    <link rel="canonical" href="{{ canonical_url or request.base_url }}">
+    <link rel="alternate" href="{{ canonical_url or request.base_url }}" hreflang="th">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site_name }}">
+    <meta property="og:title" content="ดูทีวีออนไลน์ สด ครบทุกช่อง | {{ site_name }}">
+    <meta property="og:description"
+        content="ดูทีวีออนไลน์ สด ครบทุกช่อง ข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ 24 ชั่วโมง">
+    <meta property="og:url" content="{{ canonical_url or request.base_url }}">
+    <meta property="og:image" content="{{ url_for('static', filename='img/thaipbs.png', _external=True) }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ดูทีวีออนไลน์ สด ครบทุกช่อง | {{ site_name }}">
+    <meta name="twitter:description" content="ดูสดช่องทีวีไทย รวมลิงก์ทางการ ใช้งานง่าย บนมือถือและเดสก์ท็อป">
+    <meta name="twitter:image" content="{{ url_for('static', filename='img/thaipbs.png', _external=True) }}">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "{{ site_name }}",
+            "url": "{{ base_url }}/",
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": "{{ base_url }}/?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+            }
+        }
+        </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "{{ site_name }}",
+            "url": "{{ base_url }}/",
+            "logo": "{{ url_for('static', filename='img/thaipbs.png', _external=True) }}"
+        }
+        </script>
+
+    <!-- Custom Styling -->
+    <style>
+        /* Hero */
+        .hero {
+            background: radial-gradient(1200px 400px at 10% -10%, #6ea8fe33, transparent),
+                radial-gradient(1200px 400px at 110% 10%, #e37fff33, transparent),
+                linear-gradient(135deg, #0d6efd, #6f42c1);
+            color: #fff;
+            border-radius: 1rem;
+        }
+
+        .hero h1 {
+            letter-spacing: .5px;
+        }
+
+        /* Custom colors for badges */
+        .bg-pink {
+            background-color: #e91e63 !important;
+        }
+
+        /* Enhanced card hover effects */
+        .card {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Custom nav-pills styling */
+        .nav-pills .nav-link {
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 0 2px;
+        }
+
+        .nav-pills .nav-link.active {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+        }
+
+        /* Enhanced navbar */
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Smooth animations */
+        .tab-pane {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Badge enhancements */
+        .badge {
+            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        /* Footer enhancements */
+        footer a:hover {
+            transform: scale(1.2);
+            transition: transform 0.2s;
+        }
+
+        /* News buttons styling */
+        .btn-outline-secondary {
+            margin: 5px;
+            border-radius: 25px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+
+        .btn-outline-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-outline-secondary i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Featured channels */
+        .search-wrap {
+            max-width: 640px;
+            margin-inline: auto;
+        }
+
+        .channel-card img.logo {
+            height: 64px;
+            object-fit: contain;
+        }
+
+        .channel-card .card-body {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .channel-card .actions {
+            margin-left: auto;
+        }
+
+        /* === Dark/Red/White Theme Overrides === */
+        body {
+            background: #111;
+            color: #fff;
+        }
+
+        /* Navbar */
+        .navbar,
+        .navbar.bg-primary,
+        .navbar-dark.bg-primary {
+            background-color: #000 !important;
+        }
+
+        .navbar .navbar-brand,
+        .navbar .nav-link {
+            color: #fff !important;
+        }
+
+        .navbar .nav-link:hover,
+        .navbar .nav-link.active {
+            color: #b71c1c !important;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #000 55%, #b71c1c 100%);
+            color: #fff;
+        }
+
+        /* Cards */
+        .card {
+            background: #1b1b1b;
+            color: #fff;
+            border: 1px solid #2a2a2a;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(183, 28, 28, .25);
+        }
+
+        .card .text-muted {
+            color: #b0b0b0 !important;
+        }
+
+        /* Tabs (pills + tabs) */
+        .nav-pills .nav-link {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .nav-pills .nav-link.active {
+            background: #b71c1c;
+            color: #fff;
+        }
+
+        .nav-tabs .nav-link {
+            color: #eee;
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: #b71c1c;
+            border-color: #b71c1c;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #fff;
+            color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        .btn-outline-primary {
+            color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        .btn-outline-primary:hover {
+            background: #b71c1c;
+            color: #fff;
+        }
+
+        /* Unify outline-danger to theme red */
+        .btn-outline-danger {
+            color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        .btn-outline-danger:hover {
+            background: #b71c1c;
+            color: #fff;
+        }
+
+        /* Make sports outline-success follow theme red */
+        .btn-outline-success {
+            color: #b71c1c;
+            border-color: #b71c1c;
+        }
+
+        .btn-outline-success:hover {
+            background: #b71c1c;
+            color: #fff;
+        }
+
+        /* Footer */
+        footer.bg-dark {
+            background: #000 !important;
+            color: #fff;
+        }
+
+        footer a {
+            color: #fff;
+        }
+
+        footer a:hover {
+            color: #b71c1c;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-tv me-2"></i>TVHUB
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Navigation items can be added here -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="container mt-4">
+        <div class="hero p-4 p-md-5 shadow-sm">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h1 class="display-6 mb-2">ดูทีวีออนไลน์ สด คมชัด ลื่นไหล</h1>
+                    <p class="mb-3 mb-lg-4 opacity-75">รวมช่องทีวีฮิต ครบ จบที่เดียว รองรับมือถือและทีวี</p>
+                    <p class="mb-3 mb-lg-4 opacity-75">เว็บไซต์รวบรวมช่องทีวีออนไลน์ สด ครบทุกหมวดหมู่ รวมถึงข่าวบันเทิง
+                        วาไรตี้ กีฬา เด็ก เพลง วิทยุ หวย เช็คพัสดุ และไลฟ์สไตล์ สนับสนุนการดูบนมือถือและทีวี
+                        ดูฟรีไม่มีค่าใช้จ่าย พร้อมลิงก์ดูบอลสดและข่าวกีฬา</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="small text-white-50">ดูทีวีออนไลน์ 24 ชั่วโมง</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Container -->
+        <div class="container my-4">
+            <!-- Category Section -->
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-4 text-center">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>หมวดหมู่รายการ
+                    </h2>
+
+                    <!-- Category Navigation -->
+                    {% include 'tabs/category_navigation.html' %}
+
+                    <!-- Category Tab Content -->
+                    {% include 'tabs/category_content.html' %}
+                </div>
+            </div>
+        </div>
+
+        <!-- TV Channels Section -->
+        <div class="container my-5">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <h3 class="mb-4 text-center">
+                        <i class="bi bi-tv me-2"></i>ช่องทีวีออนไลน์
+                    </h3>
+
+                    <!-- TV Navigation -->
+                    {% include 'tabs/tv_navigation.html' %}
+
+                    <!-- TV Tab Content -->
+                    {% include 'tabs/tv_content.html' %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>
+                        <i class="bi bi-tv me-2"></i>TVHUB
+                    </h5>
+                    <p class="mb-0">ทีวีออนไลน์ครบครันทุกรายการ</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div id="histats_counter"></div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5.3 JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Featured viewer ticker (simple client-side simulation)
+        (function () {
+            const el = document.getElementById('top-viewers');
+            if (!el) return;
+            let n = parseInt(el.textContent.replace(/,/g, '')) || 3200;
+            function tick() {
+                const delta = Math.floor(Math.random() * 15) - 7; // -7..+7
+                n = Math.max(500, n + delta);
+                el.textContent = n.toLocaleString();
+            }
+            setInterval(tick, 30000);
+        })();
+
+        // Bootstrap handles tab functionality automatically
+        // Additional custom JavaScript can be added here if needed
+
+        // Optional: Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Optional: Initialize tooltips if needed
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Parcel tracking helper (17TRACK)
+        function trackOn17() {
+            var input = document.getElementById('tracking-input');
+            if (!input) return;
+            var code = (input.value || '').trim();
+            if (!code) {
+                input.focus();
+                return;
+            }
+            var url = 'https://t.17track.net/th#nums=' + encodeURIComponent(code);
+            window.open(url, '_blank');
+        }
+
+        // Submit on Enter
+        var trackInput = document.getElementById('tracking-input');
+        if (trackInput) {
+            trackInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    trackOn17();
+                }
+            });
+        }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4960Y1MC3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-C4960Y1MC3');
+    </script>
+
+    <!-- Histats.com  START  (aync)-->
+    <script type="text/javascript">var _Hasync = _Hasync || [];
+        _Hasync.push(['Histats.start', '1,4974433,4,320,112,62,00001011']);
+        _Hasync.push(['Histats.fasi', '1']);
+        _Hasync.push(['Histats.track_hits', '']);
+        (function () {
+            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+            hs.src = ('//s10.histats.com/js15_as.js');
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+        })();</script>
+    <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4974433&101" alt=""
+                border="0"></a></noscript>
+    <!-- Histats.com  END  -->
+</body>
+
+</html>

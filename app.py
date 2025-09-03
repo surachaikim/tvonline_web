@@ -13,7 +13,7 @@ analytics_data = []
 @app.route('/')
 def homepage():
     return render_template(
-        'homepage.html',
+        'homepage_new.html',
         canonical_url=request.base_url,
         meta_description='ดูทีวีออนไลน์ สด ครบทุกช่อง ข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ รวมลิงก์จากช่องทางทางการ ดูสดได้ตลอด 24 ชั่วโมง',
     )
@@ -27,7 +27,7 @@ def live_ch3():
         'channel_id': 'ch3',
         'name': 'ช่อง 3 HD',
         'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 3',
-        'stream_link': 'https://lb1-live-mv.v2h-cdn.com/hls/ffae/3hd/3hd.m3u8',
+        'stream_link': 'https://p1.cdn.vet/live/ch3/i/ch3i.m3u8?sid=b5yNTFjZjA3MTBhYzU0YjFlYzhlOQOTY1ZjRjNDg5ZjE0YjI1',
         'logo': '/static/img/3hd.png',
         'isLive': True
     }
