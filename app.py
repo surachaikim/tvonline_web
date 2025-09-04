@@ -143,6 +143,22 @@ def live_4sport():
     
     return render_template('live.html', canonical_url=request.base_url, **channel_data)
 
+
+@app.route('/live/manyok')
+def live_manyok():
+    """Live Channel Manyok Channel"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'manyok',
+        'name': 'Manyok Channel',
+        'description': 'สถานีโทรทัศน์ Manyok Channel',
+        'stream_link': 'http://192.168.1.225/hls/manyok.m3u8',
+        'logo': '/static/img/MANYOK TV.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
 # Global template context for SEO/site info
 @app.context_processor
 def inject_site_meta():
