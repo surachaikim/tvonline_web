@@ -152,7 +152,7 @@ def live_manyok():
         'channel_id': 'manyok',
         'name': 'Manyok Channel',
         'description': 'สถานีโทรทัศน์ Manyok Channel',
-        'stream_link': 'http://192.168.1.225/hls/manyok.m3u8',
+        'stream_link': 'http://192.168.1.225:80/hls/manyok.m3u8',
         'logo': '/static/img/MANYOK TV.png',
         'isLive': True
     }
