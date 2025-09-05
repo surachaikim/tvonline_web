@@ -152,8 +152,24 @@ def live_manyok():
         'channel_id': 'manyok',
         'name': 'Manyok Channel',
         'description': 'สถานีโทรทัศน์ Manyok Channel',
-        'stream_link': 'http://192.168.1.225:80/hls/manyok.m3u8',
+        'stream_link': 'https://playball.fun/hls/manyok.m3u8',
         'logo': '/static/img/MANYOK TV.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/kids')
+def live_kids():
+    """Live Channel Kids"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'kids',
+        'name': 'Kids Channel',
+        'description': 'สถานีโทรทัศน์ Kids Channel',
+        'stream_link': 'https://playball.fun/hls/kids.m3u8',
+        'logo': '/static/img/kids logo.png',
         'isLive': True
     }
     
