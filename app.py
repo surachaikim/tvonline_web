@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, Response, url_for
+from flask import Flask, render_template, request, jsonify, Response, url_for, send_from_directory
 import json
 from datetime import datetime
 import os
@@ -186,36 +186,10 @@ def inject_site_meta():
     }
 
 
-def _sitemap_urls():
-    today = datetime.utcnow().date().isoformat()
-    urls = [
-        {'loc': url_for('homepage', _external=True), 'priority': '1.0', 'changefreq': 'daily', 'lastmod': today},
-        {'loc': url_for('live_ch3', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_ch5', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_ch7', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_mcot', _external=True), 'priority': '0.7', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_thaipbs', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-    ]
-    return urls
-
-
 @app.route('/sitemap.xml')
 def sitemap():
-    urls = _sitemap_urls()
-    xml_parts = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-    ]
-    for u in urls:
-        xml_parts.append('<url>')
-        xml_parts.append(f'<loc>{u["loc"]}</loc>')
-        xml_parts.append(f'<lastmod>{u["lastmod"]}</lastmod>')
-        xml_parts.append(f'<changefreq>{u["changefreq"]}</changefreq>')
-        xml_parts.append(f'<priority>{u["priority"]}</priority>')
-        xml_parts.append('</url>')
-    xml_parts.append('</urlset>')
-    xml = '\n'.join(xml_parts)
-    return Response(xml, mimetype='application/xml')
+    """Serve the static sitemap.xml file"""
+    return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
 
 
 @app.route('/robots.txt')
