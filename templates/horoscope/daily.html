@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดวงรายวัน - TVHUB.ONLINE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --brand-red: #b71c1c;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            color: #fff;
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom-left-radius: 2rem;
+            border-bottom-right-radius: 2rem;
+        }
+
+        .prediction-card {
+            background: #1b1b1b;
+            border: 1px solid #2a2a2a;
+            border-left: 5px solid var(--brand-red);
+            color: #ddd;
+            border-radius: .75rem;
+            padding: 1.25rem;
+        }
+
+        .text-muted {
+            color: #b0b0b0 !important;
+        }
+
+        .text-brand {
+            color: var(--brand-red) !important;
+        }
+
+        /* Sticky footer */
+        footer {
+            margin-top: auto !important;
+        }
+
+        /* Make main content take remaining height */
+        main#page-main {
+            flex: 1 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'includes/header.html' %}
+
+    <main id="page-main">
+        <div class="hero-section mb-4">
+            <div class="container">
+                <h1 class="fw-bold">ดวงรายวัน</h1>
+                <p class="text-white-50 mb-0">คำทำนายการงาน การเงิน และความรัก จันทร์ - อาทิตย์</p>
+                <div class="small text-white-50 mt-2" id="today-label"></div>
+            </div>
+        </div>
+
+        <div class="container" id="daily-root">
+            <!-- Loading -->
+            <div id="loading" class="text-center my-4">
+                <div class="spinner-border text-brand mb-3" role="status"></div>
+                <div class="fw-semibold">กำลังทำนายผล ตั้งจิตอธิษฐาน…</div>
+                <div class="text-muted small">โปรดรอสักครู่ ระบบกำลังขอคำทำนายจาก AI</div>
+            </div>
+
+            <!-- Error -->
+            <div id="error" class="alert alert-danger d-none" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="error-text">ไม่สามารถโหลดคำทำนายได้</span>
+            </div>
+
+            <!-- Content: Tabs Mon-Sun -->
+            <div id="content" class="d-none">
+                <ul class="nav nav-pills justify-content-center mb-4" id="day-tab" role="tablist"></ul>
+                <div class="tab-content" id="day-tab-content"></div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <script>
+        (async function () {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const errorText = document.getElementById('error-text');
+            const content = document.getElementById('content');
+
+            // Today label
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const todayLabel = document.getElementById('today-label');
+            if (todayLabel) todayLabel.textContent = `วันนี้: ${todayStr}`;
+
+            const tabsEl = document.getElementById('day-tab');
+            const tabContentEl = document.getElementById('day-tab-content');
+            const indexToKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayKeyToday = indexToKey[now.getDay()]; // not auto-activating; only for display if needed later
+
+            function render(weekly) {
+                const daysOfWeek = { monday: 'วันจันทร์', tuesday: 'วันอังคาร', wednesday: 'วันพุธ', thursday: 'วันพฤหัสบดี', friday: 'วันศุกร์', saturday: 'วันเสาร์', sunday: 'วันอาทิตย์' };
+                const order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                tabsEl.innerHTML = '';
+                tabContentEl.innerHTML = '';
+                order.forEach((key) => {
+                    const isActive = false; // user will choose manually
+                    const li = document.createElement('li');
+                    li.className = 'nav-item';
+                    li.innerHTML = `<button class="nav-link ${isActive ? 'active' : ''}" id="${key}-tab" data-bs-toggle="tab" data-bs-target="#${key}-content" type="button" role="tab" aria-controls="${key}-content" aria-selected="${isActive ? 'true' : 'false'}">${daysOfWeek[key]}</button>`;
+                    tabsEl.appendChild(li);
+
+                    const pane = document.createElement('div');
+                    pane.className = `tab-pane fade`;
+                    pane.id = `${key}-content`;
+                    pane.role = 'tabpanel';
+                    pane.setAttribute('aria-labelledby', `${key}-tab`);
+
+                    const pred = weekly[key] || {};
+                    pane.innerHTML = `
+                            <div class="row g-3 justify-content-center">
+                                <div class="col-lg-4">
+                                    <div class="prediction-card h-100">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-briefcase-fill text-info fs-3 me-3"></i>
+                                            <div>
+                                                <h5 class="text-white mb-2">การงาน</h5>
+                                                <p class="mb-0">${pred.work || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="prediction-card h-100">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-cash-coin text-success fs-3 me-3"></i>
+                                            <div>
+                                                <h5 class="text-white mb-2">การเงิน</h5>
+                                                <p class="mb-0">${pred.finance || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="prediction-card h-100">
+                                        <div class="d-flex align-items-start">
+                                            <i class="bi bi-heart-fill text-brand fs-3 me-3"></i>
+                                            <div>
+                                                <h5 class="text-white mb-2">ความรัก</h5>
+                                                <p class="mb-0">${pred.love || '-'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                    tabContentEl.appendChild(pane);
+                });
+            }
+
+            function show(el) { el.classList.remove('d-none'); }
+            function hide(el) { el.classList.add('d-none'); }
+
+            try {
+                const res = await fetch('/api/horoscope/weekly');
+                const data = await res.json();
+                if (!res.ok || data.error) throw new Error(data.error || 'เกิดข้อผิดพลาด');
+                render(data);
+                hide(loading);
+                show(content);
+            } catch (e) {
+                hide(loading);
+                errorText.textContent = e.message || 'ไม่สามารถโหลดคำทำนายได้';
+                show(error);
+            }
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

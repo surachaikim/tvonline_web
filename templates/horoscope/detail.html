@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดูดวงรายสัปดาห์ {{ thai_sign }} - TVHUB.ONLINE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --brand-red: #b71c1c;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .horoscope-card {
+            background-color: #1b1b1b;
+            border: 1px solid #2a2a2a;
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px rgba(183, 28, 28, .15);
+            overflow: hidden;
+        }
+
+        .horoscope-header {
+            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .nav-pills .nav-link {
+            background: #1e1e1e;
+            color: #fff;
+            font-weight: 500;
+            border-radius: 50px;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--brand-red);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(183, 28, 28, 0.35);
+        }
+
+        .prediction-icon {
+            font-size: 1.75rem;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .prediction-card {
+            border: none;
+            border-left: 5px solid;
+            background-color: #1e1e1e;
+            color: #ddd;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .prediction-card.work {
+            border-color: #17a2b8;
+        }
+
+        .prediction-card.finance {
+            border-color: #28a745;
+        }
+
+        .prediction-card.love {
+            border-color: var(--brand-red);
+        }
+
+        .prediction-card h5 {
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .text-brand {
+            color: var(--brand-red) !important;
+        }
+
+        /* Sticky footer */
+        footer {
+            margin-top: auto !important;
+        }
+
+        /* Make main content take remaining height */
+        main#page-main {
+            flex: 1 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'includes/header.html' %}
+
+    <main id="page-main">
+        <div class="container my-5">
+            <div class="horoscope-card">
+                <div class="horoscope-header text-center">
+                    <h1 class="display-5 fw-bold">ดูดวงรายสัปดาห์</h1>
+                    <p class="h2 fw-normal">{{ thai_sign }} ({{ sign|capitalize }})</p>
+                    <div class="small text-white-50 mt-2" id="today-label"></div>
+                </div>
+
+                <div class="p-4 p-md-5" id="horoscope-root" data-sign="{{ sign }}"
+                    data-days='{{ days_of_week | tojson | e }}'>
+                    <!-- Loading State -->
+                    <div id="loading-state" class="text-center my-4">
+                        <div class="spinner-border text-brand mb-3" role="status" aria-hidden="true"></div>
+                        <div class="fw-semibold">กำลังทำนายผล ตั้งจิตอธิษฐาน…</div>
+                        <div class="text-muted small">โปรดรอสักครู่ </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="error-state" class="alert alert-danger d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="error-text">ไม่สามารถโหลดคำทำนายได้</span>
+                    </div>
+
+                    <!-- Content State -->
+                    <div id="content-state" class="d-none">
+                        <!-- Day Navigation Tabs -->
+                        <ul class="nav nav-pills justify-content-center mb-4" id="day-tab" role="tablist"></ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="day-tab-content"></div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('horoscope_list') }}" class="btn btn-outline-secondary"><i
+                                class="bi bi-arrow-left-circle"></i> กลับไปหน้าราศีทั้งหมด</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'includes/footer.html' %}
+    <script>
+        (function () {
+            const root = document.getElementById('horoscope-root');
+            const sign = root?.dataset?.sign || '';
+            let daysOfWeek = {};
+            try { daysOfWeek = JSON.parse(root?.dataset?.days || '{}'); } catch (_) { daysOfWeek = {}; }
+
+            // Compute today's label (Thai) and today's day key
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const todayEl = document.getElementById('today-label');
+            if (todayEl) { todayEl.textContent = `วันนี้: ${todayStr}`; }
+            const indexToKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayKeyToday = indexToKey[now.getDay()];
+
+            const loadingEl = document.getElementById('loading-state');
+            const errorEl = document.getElementById('error-state');
+            const errorText = document.getElementById('error-text');
+            const contentEl = document.getElementById('content-state');
+            const tabsEl = document.getElementById('day-tab');
+            const tabContentEl = document.getElementById('day-tab-content');
+
+            function show(el) { el.classList.remove('d-none'); }
+            function hide(el) { el.classList.add('d-none'); }
+
+            function createPredictionCard(cls, icon, title, text) {
+                const wrap = document.createElement('div');
+                wrap.className = `prediction-card ${cls}`;
+                wrap.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi ${icon} prediction-icon ${cls === 'work' ? 'text-info' : cls === 'finance' ? 'text-success' : 'text-danger'}"></i>
+                        <div>
+                            <h5 class="fw-bold">${title}</h5>
+                            <p class="mb-0"></p>
+                        </div>
+                    </div>`;
+                wrap.querySelector('p').textContent = text || '-';
+                return wrap;
+            }
+
+            function render(data) {
+                tabsEl.innerHTML = '';
+                tabContentEl.innerHTML = '';
+
+                // Fixed order Monday → Sunday
+                const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                dayKeys.forEach((dayKey, idx) => {
+                    const isActive = dayKey === dayKeyToday;
+                    const active = isActive ? 'active' : '';
+                    const selected = isActive ? 'true' : 'false';
+                    const dayLabel = daysOfWeek[dayKey] || dayKey;
+
+                    // Tab button
+                    const li = document.createElement('li');
+                    li.className = 'nav-item';
+                    li.role = 'presentation';
+                    li.innerHTML = `
+                        <button class="nav-link ${active}" id="${dayKey}-tab" data-bs-toggle="tab"
+                            data-bs-target="#${dayKey}-content" type="button" role="tab"
+                            aria-controls="${dayKey}-content" aria-selected="${selected}">${dayLabel}</button>`;
+                    tabsEl.appendChild(li);
+
+                    // Tab pane
+                    const pane = document.createElement('div');
+                    pane.className = `tab-pane fade ${isActive ? 'show active' : ''}`;
+                    pane.id = `${dayKey}-content`;
+                    pane.role = 'tabpanel';
+                    pane.setAttribute('aria-labelledby', `${dayKey}-tab`);
+
+                    const row = document.createElement('div');
+                    row.className = 'row justify-content-center';
+                    const col = document.createElement('div');
+                    col.className = 'col-lg-11';
+                    row.appendChild(col);
+                    pane.appendChild(row);
+
+                    const pred = data[dayKey] || {};
+                    col.appendChild(createPredictionCard('work', 'bi-briefcase-fill', 'การงาน', pred.work));
+                    col.appendChild(createPredictionCard('finance', 'bi-cash-coin', 'การเงิน', pred.finance));
+                    col.appendChild(createPredictionCard('love', 'bi-heart-fill', 'ความรัก', pred.love));
+
+                    tabContentEl.appendChild(pane);
+                });
+            }
+
+            async function load() {
+                try {
+                    const res = await fetch(`/api/horoscope/${encodeURIComponent(sign)}`);
+                    const data = await res.json();
+                    if (!res.ok || data.error) {
+                        throw new Error(data.error || 'เกิดข้อผิดพลาด');
+                    }
+                    render(data);
+                    hide(loadingEl);
+                    hide(errorEl);
+                    show(contentEl);
+                } catch (err) {
+                    hide(loadingEl);
+                    errorText.textContent = err.message || 'ไม่สามารถโหลดคำทำนายได้';
+                    show(errorEl);
+                }
+            }
+
+            load();
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

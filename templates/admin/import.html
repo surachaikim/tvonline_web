@@ -1,0 +1,19 @@
+{% extends 'admin/base_admin.html' %}
+{% block content %}
+<h3 class="mb-3">นำเข้า JSON</h3>
+<form method="post" enctype="multipart/form-data" class="mb-3">
+    <div class="mb-3">
+        <input type="file" class="form-control" name="file" accept="application/json" required />
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary" type="submit">พรีวิว</button>
+        {% if preview %}
+        <button class="btn btn-success" name="confirm" value="yes" type="submit">นำเข้า</button>
+        {% endif %}
+    </div>
+</form>
+{% if preview %}
+<div class="alert alert-info">พรีวิว {{ preview|length }} รายการ</div>
+<pre class="bg-light p-3 border rounded" style="max-height: 420px; overflow: auto;">{{ preview|tojson(indent=2) }}</pre>
+{% endif %}
+{% endblock %}

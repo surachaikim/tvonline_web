@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ดูดวงตามวันเดือนปีเกิด - TVHUB.ONLINE</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --brand-red: #b71c1c;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            background: #111;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            color: #fff;
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom-left-radius: 2rem;
+            border-bottom-right-radius: 2rem;
+        }
+
+        footer {
+            margin-top: auto !important;
+        }
+
+        main#page-main {
+            flex: 1 0 auto;
+            display: block;
+        }
+
+        .card-dark {
+            background: #1b1b1b;
+            border: 1px solid #2a2a2a;
+            color: #ddd;
+        }
+
+        .text-muted {
+            color: #b0b0b0 !important;
+        }
+
+        .text-brand {
+            color: var(--brand-red) !important;
+        }
+
+        .prediction-card {
+            background: #1b1b1b;
+            border: 1px solid #2a2a2a;
+            border-left: 5px solid var(--brand-red);
+            color: #ddd;
+            border-radius: .75rem;
+            padding: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'includes/header.html' %}
+
+    <main id="page-main">
+        <div class="hero-section mb-4">
+            <div class="container">
+                <h1 class="fw-bold">ดูดวงตามวันเดือนปีเกิด</h1>
+                <p class="text-white-50 mb-0">กรอกวันเกิดของคุณเพื่อรับคำทำนายเฉพาะบุคคล</p>
+            </div>
+        </div>
+
+        <div class="container" id="birth-root">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card card-dark p-3 p-md-4 mb-4">
+                        <form id="birth-form" class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="birthdate" class="form-label">วันเกิด (รูปแบบ: dd/mm/yyyy พ.ศ.)</label>
+                                <input type="text" inputmode="numeric" pattern="\d{1,2}/\d{1,2}/\d{4}"
+                                    placeholder="ตัวอย่าง: 24/08/2535" class="form-control" id="birthdate" required />
+                                <div class="form-text text-muted">รองรับทั้ง พ.ศ. (เช่น 24/08/2535) และ ค.ศ. (เช่น
+                                    1992-08-24)</div>
+                            </div>
+                            <div class="col-12 col-md-6 align-self-end">
+                                <button type="submit" class="btn btn-danger w-100"><i class="bi bi-magic"></i>
+                                    ทำนายดวง</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="loading" class="text-center my-4 d-none">
+                        <div class="spinner-border text-brand mb-3" role="status"></div>
+                        <div class="fw-semibold">กำลังทำนายผล ตั้งจิตอธิษฐาน…</div>
+                        <div class="text-muted small">โปรดรอสักครู่ ระบบกำลังขอคำทำนายจาก AI</div>
+                    </div>
+
+                    <div id="error" class="alert alert-danger d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="error-text">ไม่สามารถโหลดคำทำนายได้</span>
+                    </div>
+
+                    <div id="result" class="d-none">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="card card-dark p-3">
+                                    <div class="row g-3">
+                                        <div class="col-md-3"><strong>วันเกิด:</strong> <span
+                                                id="meta-birthdate">-</span></div>
+                                        <div class="col-md-3"><strong>วันในสัปดาห์:</strong> <span
+                                                id="meta-weekday">-</span></div>
+                                        <div class="col-md-3"><strong>ราศี:</strong> <span id="meta-western">-</span>
+                                        </div>
+                                        <div class="col-md-3"><strong>นักษัตร:</strong> <span id="meta-thai">-</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 small text-muted">อายุโดยประมาณ: <span id="meta-age">-</span> ปี
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="prediction-card">
+                                    <h5 class="text-white mb-2">สรุปภาพรวม</h5>
+                                    <p class="mb-0" id="overview"></p>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="prediction-card">
+                                    <h5 class="text-white mb-2">บุคลิก/จุดเด่น</h5>
+                                    <p class="mb-0" id="personality"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prediction-card h-100">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-briefcase-fill text-info fs-3 me-3"></i>
+                                        <div>
+                                            <h5 class="text-white mb-2">การงาน</h5>
+                                            <p class="mb-0" id="work"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prediction-card h-100">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-cash-coin text-success fs-3 me-3"></i>
+                                        <div>
+                                            <h5 class="text-white mb-2">การเงิน</h5>
+                                            <p class="mb-0" id="finance"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prediction-card h-100">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-heart-fill text-brand fs-3 me-3"></i>
+                                        <div>
+                                            <h5 class="text-white mb-2">ความรัก</h5>
+                                            <p class="mb-0" id="love"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="prediction-card h-100">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-heart-pulse-fill text-danger fs-3 me-3"></i>
+                                        <div>
+                                            <h5 class="text-white mb-2">สุขภาพ</h5>
+                                            <p class="mb-0" id="health"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="prediction-card">
+                                    <h5 class="text-white mb-2">เครื่องราง/โชคดี</h5>
+                                    <p class="mb-1"><strong>สีมงคล:</strong> <span id="lucky-color">-</span></p>
+                                    <p class="mb-1"><strong>เลขนำโชค:</strong> <span id="lucky-numbers">-</span></p>
+                                    <p class="mb-0"><strong>วันดี:</strong> <span id="lucky-days">-</span></p>
+                                </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <div class="prediction-card">
+                                    <h5 class="text-white mb-2">คำแนะนำประจำตัว</h5>
+                                    <p class="mb-0" id="advice"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'includes/footer.html' %}
+
+    <script>
+        (function () {
+            const form = document.getElementById('birth-form');
+            const birthdateInput = document.getElementById('birthdate');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const errorText = document.getElementById('error-text');
+            const result = document.getElementById('result');
+
+            function show(el) { el.classList.remove('d-none'); }
+            function hide(el) { el.classList.add('d-none'); }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hide(error); hide(result); show(loading);
+                try {
+                    const birthdate = birthdateInput.value.trim();
+                    const res = await fetch('/api/horoscope/birth', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ birthdate })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || data.error) throw new Error(data.error || 'เกิดข้อผิดพลาด');
+
+                    // Fill results
+                    const meta = data.meta || {};
+                    document.getElementById('meta-birthdate').textContent = meta.birthdate || birthdate;
+                    document.getElementById('meta-weekday').textContent = meta.weekday_th || '-';
+                    document.getElementById('meta-western').textContent = meta.western_zodiac || '-';
+                    document.getElementById('meta-thai').textContent = meta.thai_zodiac || '-';
+                    document.getElementById('meta-age').textContent = (meta.age ?? '').toString() || '-';
+                    document.getElementById('overview').textContent = data.overview || '-';
+                    document.getElementById('personality').textContent = data.personality || '-';
+                    document.getElementById('work').textContent = data.work || '-';
+                    document.getElementById('finance').textContent = data.finance || '-';
+                    document.getElementById('love').textContent = data.love || '-';
+                    document.getElementById('health').textContent = data.health || '-';
+                    const lucky = data.lucky || {};
+                    document.getElementById('lucky-color').textContent = lucky.color || '-';
+                    const nums = Array.isArray(lucky.numbers) ? lucky.numbers.join(', ') : (lucky.numbers || '-');
+                    const days = Array.isArray(lucky.days) ? lucky.days.join(', ') : (lucky.days || '-');
+                    document.getElementById('lucky-numbers').textContent = nums || '-';
+                    document.getElementById('lucky-days').textContent = days || '-';
+                    document.getElementById('advice').textContent = data.advice || '-';
+
+                    hide(loading); show(result);
+                } catch (err) {
+                    hide(loading); errorText.textContent = err.message || 'ไม่สามารถโหลดคำทำนายได้'; show(error);
+                }
+            });
+        })();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
