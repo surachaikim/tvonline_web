@@ -39,6 +39,13 @@
     <meta name="twitter:description" content="ดูสดช่องทีวีไทย รวมลิงก์ทางการ ใช้งานง่าย บนมือถือและเดสก์ท็อป">
     <meta name="twitter:image" content="{{ url_for('static', filename='img/thaipbs.png', _external=True) }}">
 
+    <!-- Google AdSense (Auto ads) - replace ca-pub-XXXXXXXXXXXXXXX with your Publisher ID -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
+        crossorigin="anonymous"></script>
+
+    <!-- Google Site Verification (optional): replace with your verification token -->
+    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_TOKEN" /> -->
+
     <!-- JSON-LD -->
     <script type="application/ld+json">
         {
@@ -338,110 +345,59 @@
                 <div class="col-lg-8">
                     <h1 class="display-6 mb-2">ดูทีวีออนไลน์ สด คมชัด ลื่นไหล</h1>
                     <p class="mb-3 mb-lg-4 opacity-75">รวมช่องทีวีฮิต ครบ จบที่เดียว รองรับมือถือและทีวี</p>
-                    <p class="mb-3 mb-lg-4 opacity-75">เว็บไซต์รวบรวมช่องทีวีออนไลน์ สด ครบทุกหมวดหมู่ รวมถึงข่าวบันเทิง
-                        วาไรตี้ กีฬา เด็ก เพลง วิทยุ หวย เช็คพัสดุ และไลฟ์สไตล์ สนับสนุนการดูบนมือถือและทีวี
-                        ดูฟรีไม่มีค่าใช้จ่าย พร้อมลิงก์ดูบอลสดและข่าวกีฬา</p>
-                </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="small text-white-50">ดูทีวีออนไลน์ 24 ชั่วโมง</div>
+                    <!-- Featured News Carousel Section Removed -->
                 </div>
             </div>
-        </div>
-
-        <!-- ข่าวเด่นจากเว็บต่างๆ (Webview/Carousel) -->
-        <div class="container my-4">
-            <h2 class="mb-4 text-center">
-                <i class="bi bi-newspaper me-2"></i>ข่าวเด่น
-            </h2>
-            <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner rounded shadow">
-                    <div class="carousel-item active">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.sanook.com/news/" title="Sanook News" frameborder="0"
-                                allowfullscreen style="border-radius: 12px;"></iframe>
-                        </div>
-                    </div>
-
-
-                    <div class="carousel-item">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.khaosod.co.th/" title="Khaosod News" frameborder="0"
-                                allowfullscreen style="border-radius: 12px;"></iframe>
-                        </div>
-                    </div>
-
-
-                    <div class="carousel-item">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.daradaily.com/" title="Daradaily News" frameborder="0"
-                                allowfullscreen style="border-radius: 12px;"></iframe>
-                        </div>
-                    </div>
-
-
-                    <div class="carousel-item">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.banmuang.co.th/home" title="Ban Muang News" frameborder="0"
-                                allowfullscreen style="border-radius: 12px;"></iframe>
-                        </div>
-                    </div>
 
 
 
-                    <div class="carousel-item">
-                        <div class="ratio ratio-16x9">
-                            <iframe src="https://www.thaipbs.or.th/news" title="BBC Thai News" frameborder="0"
-                                allowfullscreen style="border-radius: 12px;"></iframe>
-                        </div>
-                    </div>
-
-
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Main Container -->
-        <div class="container my-4">
-            <!-- Category Section -->
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="mb-4 text-center">
-                        <i class="bi bi-grid-3x3-gap me-2"></i>หมวดหมู่รายการ
-                    </h2>
-
-                    <!-- Category Navigation -->
-                    {% include 'tabs/category_navigation.html' %}
-
-                    <!-- Category Tab Content -->
-                    {% include 'tabs/category_content.html' %}
+            <div class="carousel-item">
+                <div class="ratio ratio-16x9">
+                    <iframe src="https://www.thaipbs.or.th/news" title="BBC Thai News" frameborder="0" allowfullscreen
+                        style="border-radius: 12px;"></iframe>
                 </div>
             </div>
+
+
         </div>
 
-        <!-- TV Channels Section -->
-        <div class="container my-5">
-            <div class="row mb-5">
-                <div class="col-12">
-                    <h3 class="mb-4 text-center">
-                        <i class="bi bi-tv me-2"></i>ช่องทีวีออนไลน์
-                    </h3>
+    </div>
+    </div>
 
-                    <!-- TV Navigation -->
-                    {% include 'tabs/tv_navigation.html' %}
+    <!-- Main Container -->
+    <div class="container my-4">
+        <!-- Category Section -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4 text-center">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>หมวดหมู่รายการ
+                </h2>
 
-                    <!-- TV Tab Content -->
-                    {% include 'tabs/tv_content.html' %}
-                </div>
+                <!-- Category Navigation -->
+                {% include 'tabs/category_navigation.html' %}
+
+                <!-- Category Tab Content -->
+                {% include 'tabs/category_content.html' %}
             </div>
         </div>
+    </div>
+
+    <!-- TV Channels Section -->
+    <div class="container my-5">
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4 text-center">
+                    <i class="bi bi-tv me-2"></i>ช่องทีวีออนไลน์
+                </h3>
+
+                <!-- TV Navigation -->
+                {% include 'tabs/tv_navigation.html' %}
+
+                <!-- TV Tab Content -->
+                {% include 'tabs/tv_content.html' %}
+            </div>
+        </div>
+    </div>
 
     </div>
 
@@ -457,6 +413,12 @@
                     <p class="mb-0">ทีวีออนไลน์ครบครันทุกรายการ</p>
                 </div>
                 <div class="col-md-6 text-md-end">
+                    <div class="small mb-2">
+                        <a href="/privacy" class="text-decoration-none text-light me-3">นโยบายความเป็นส่วนตัว</a>
+                        <a href="/terms" class="text-decoration-none text-light me-3">ข้อกำหนดการใช้งาน</a>
+                        <a href="/about" class="text-decoration-none text-light me-3">เกี่ยวกับเรา</a>
+                        <a href="/contact" class="text-decoration-none text-light">ติดต่อเรา</a>
+                    </div>
                     <div id="histats_counter"></div>
                 </div>
             </div>

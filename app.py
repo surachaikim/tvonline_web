@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, Response, url_for
+from flask import Flask, render_template, request, jsonify, Response, url_for, send_from_directory
 import json
 from datetime import datetime
 import os
@@ -17,6 +17,33 @@ def homepage():
         canonical_url=request.base_url,
         meta_description='ดูทีวีออนไลน์ สด ครบทุกช่อง ข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ รวมลิงก์จากช่องทางทางการ ดูสดได้ตลอด 24 ชั่วโมง',
     )
+
+
+# --- Legal/Info Pages (Recommended for AdSense) ---
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html', canonical_url=request.base_url)
+
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html', canonical_url=request.base_url)
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html', canonical_url=request.base_url)
+
+
+@app.route('/contact')
+def contact():
+    return render_template('contact.html', canonical_url=request.base_url)
+
+
+# Serve ads.txt from static folder root
+@app.route('/ads.txt')
+def ads_txt():
+    return send_from_directory(app.static_folder, 'ads.txt', mimetype='text/plain')
 
 
 @app.route('/live/ch3')
@@ -195,6 +222,10 @@ def _sitemap_urls():
         {'loc': url_for('live_ch7', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
         {'loc': url_for('live_mcot', _external=True), 'priority': '0.7', 'changefreq': 'weekly', 'lastmod': today},
         {'loc': url_for('live_thaipbs', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
+    {'loc': url_for('privacy', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
+    {'loc': url_for('terms', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
+    {'loc': url_for('about', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
+    {'loc': url_for('contact', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
     ]
     return urls
 
