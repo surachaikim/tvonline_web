@@ -213,6 +213,7 @@ def inject_site_meta():
     }
 
 
+<<<<<<< HEAD
 def _sitemap_urls():
     today = datetime.utcnow().date().isoformat()
     urls = [
@@ -230,23 +231,12 @@ def _sitemap_urls():
     return urls
 
 
+=======
+>>>>>>> 8ff2a03a48fa62f2d17dadad773122caa2fc1b13
 @app.route('/sitemap.xml')
 def sitemap():
-    urls = _sitemap_urls()
-    xml_parts = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-    ]
-    for u in urls:
-        xml_parts.append('<url>')
-        xml_parts.append(f'<loc>{u["loc"]}</loc>')
-        xml_parts.append(f'<lastmod>{u["lastmod"]}</lastmod>')
-        xml_parts.append(f'<changefreq>{u["changefreq"]}</changefreq>')
-        xml_parts.append(f'<priority>{u["priority"]}</priority>')
-        xml_parts.append('</url>')
-    xml_parts.append('</urlset>')
-    xml = '\n'.join(xml_parts)
-    return Response(xml, mimetype='application/xml')
+    """Serve the static sitemap.xml file"""
+    return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
 
 
 @app.route('/robots.txt')
