@@ -213,26 +213,7 @@ def inject_site_meta():
     }
 
 
-<<<<<<< HEAD
-def _sitemap_urls():
-    today = datetime.utcnow().date().isoformat()
-    urls = [
-        {'loc': url_for('homepage', _external=True), 'priority': '1.0', 'changefreq': 'daily', 'lastmod': today},
-        {'loc': url_for('live_ch3', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_ch5', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_ch7', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_mcot', _external=True), 'priority': '0.7', 'changefreq': 'weekly', 'lastmod': today},
-        {'loc': url_for('live_thaipbs', _external=True), 'priority': '0.8', 'changefreq': 'weekly', 'lastmod': today},
-    {'loc': url_for('privacy', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
-    {'loc': url_for('terms', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
-    {'loc': url_for('about', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
-    {'loc': url_for('contact', _external=True), 'priority': '0.5', 'changefreq': 'yearly', 'lastmod': today},
-    ]
-    return urls
 
-
-=======
->>>>>>> 8ff2a03a48fa62f2d17dadad773122caa2fc1b13
 @app.route('/sitemap.xml')
 def sitemap():
     """Serve the static sitemap.xml file"""
