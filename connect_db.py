@@ -3,9 +3,9 @@ import pymysql
 from datetime import datetime
 
 # HOST = "192.168.1.123"
-HOST = os.getenv('DB_HOST', '127.0.0.1')
-USER = os.getenv('DB_USER', 'root')
-PASS = os.getenv('DB_PASS', '1234')
+HOST = os.getenv('DB_HOST', '192.168.1.190')
+USER = os.getenv('DB_USER', 'kim')
+PASS = os.getenv('DB_PASS', 'P@ssw0rdKim')
 DATABASE = os.getenv('DB_NAME', 'tvhub')
 
 

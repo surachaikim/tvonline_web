@@ -1,5 +1,6 @@
 import logging
 import os
+from dotenv import load_dotenv
 import json
 import re
 import time
@@ -13,7 +14,8 @@ from blueprints.reviews import bp as reviews_bp
 from connect_db import db as dbutil
 
 # --- Gemini API Configuration ---
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+load_dotenv()
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY','AIzaSyDwnQ_MF1rCJeAn-uTXb_p5TNBYx2d5vvQ')
 if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
@@ -87,6 +89,163 @@ def terms():
 @app.route('/contact')
 def contact():
     return render_template('legal/contact.html')
+
+@app.route('/live/ch3')
+def live_ch3():
+    """Live Channel 3 HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'ch3',
+        'name': 'ช่อง 3 HD',
+        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 3',
+        'stream_link': 'https://p1.cdn.vet/live/ch3/i/ch3i.m3u8?sid=b5yNTFjZjA3MTBhYzU0YjFlYzhlOQOTY1ZjRjNDg5ZjE0YjI1',
+        'logo': '/static/img/3hd.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+@app.route('/live/ch5')
+def live_ch5():
+    """Live Channel 5 HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'ch5',
+        'name': 'ช่อง 5 HD',
+        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 5',
+        'stream_link': 'https://639bc5877c5fe.streamlock.net/tv5hdlive/tv5hdlive/playlist.m3u8',
+        'logo': '/static/img/channel5.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+@app.route('/live/ch7')
+def live_ch7():
+    """Live Channel 7 HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'ch7',
+        'name': 'ช่อง 7 HD',
+        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 7',
+        'stream_link': 'http://edge2a.v2h-cdn.com/hd_7/7hd.stream/playlist.m3u8',
+        'logo': '/static/img/ch7-hd.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+@app.route('/live/mcot')
+def live_mcot():
+    """Live Channel MCOT HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'mcot',
+        'name': 'MCOT HD',
+        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง MCOT',
+        'stream_link': 'https://p1.cdn.vet/live/ch9/i/ch9i.m3u8?sid=b5yMzA2OTJkMDNjOTg0YmY2NmZhMwNzdlZGQ4NzAzOTg3ZGNh',
+        'logo': '/static/img/mcot-hd.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/thaipbs')
+def live_thaipbs():
+    """Live Channel Thai PBS HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'thaipbs',
+        'name': 'ไทยพีบีเอส HD',
+        'description': 'สถานีโทรทัศน์ไทยพีบีเอส',
+        'stream_link': 'https://edge2a.v2h-cdn.com/tpbs/tpbs.stream/playlist.m3u8',
+        'logo': '/static/img/thaipbs.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/MamaHD')
+def live_MamaHD():
+    """Live Channel Mama HD"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'MamaHD',
+        'name': 'Mama HD',
+        'description': 'สถานีโทรทัศน์ Mama HD',
+        'stream_link': 'http://stv.mediacdn.ru/live/cdn/mama/playlist.m3u8',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/FWTOON')
+def live_FWTOON():
+    """Live Channel FWTOON"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'FWTOON',
+        'name': 'FWTOON',
+        'description': 'สถานีโทรทัศน์ FWTOON',
+        'stream_link': 'https://freelive2.inwstream.com:1936/freelive-edge/fwtoon_fw-iptv.stream/chunks.m3u8?nimblesessionid=187607525&wmsAuthSign=c2VydmVyX3RpbWU9OS8yLzIwMjUgNzoxODo1OSBBTSZoYXNoX3ZhbHVlPTBHS25QK1RwVEMvZHpIN2U4YnJ0T2c9PSZ2YWxpZG1pbnV0ZXM9Mg==',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/4sport')
+def live_4sport():
+    """Live Channel 4 Sport"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': '4sport',
+        'name': '4 Sport',
+        'description': 'สถานีโทรทัศน์ 4 Sport',
+        'stream_link': 'https://pepsi.abntv.live/hls/4spstream.m3u8',
+        'logo': '/static/img/cartoon.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/manyok')
+def live_manyok():
+    """Live Channel Manyok Channel"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'manyok',
+        'name': 'Manyok Channel',
+        'description': 'สถานีโทรทัศน์ Manyok Channel',
+        'stream_link': 'https://playball.fun/hls/manyok.m3u8',
+        'logo': '/static/img/MANYOK TV.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
+
+@app.route('/live/kids')
+def live_kids():
+    """Live Channel Kids"""
+    # Channel data to pass to template
+    channel_data = {
+        'channel_id': 'kids',
+        'name': 'Kids Channel',
+        'description': 'สถานีโทรทัศน์ Kids Channel',
+        'stream_link': 'https://playball.fun/hls/kids.m3u8',
+        'logo': '/static/img/kids logo.png',
+        'isLive': True
+    }
+    
+    return render_template('live.html', canonical_url=request.base_url, **channel_data)
+
 
 # --- SEO & Static Files ---
 @app.route('/sitemap.xml')
@@ -214,14 +373,14 @@ def get_gemini_horoscope(sign: str) -> dict:
         # Prefer a current model and ask for JSON; fall back if unsupported
         model = None
         try:
-            model = genai.GenerativeModel(model_name='gemini-1.5-pro', generation_config={
+            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={
                 'response_mime_type': 'application/json'
             })
         except Exception:
             try:
-                model = genai.GenerativeModel('gemini-1.5-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
             except Exception:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
 
         response = model.generate_content(prompt)
 
@@ -290,12 +449,12 @@ def get_gemini_daily() -> dict:
 
         # Prefer 1.5 with JSON; fallback as needed
         try:
-            model = genai.GenerativeModel(model_name='gemini-1.5-pro', generation_config={'response_mime_type': 'application/json'})
+            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={'response_mime_type': 'application/json'})
         except Exception:
             try:
-                model = genai.GenerativeModel('gemini-1.5-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
             except Exception:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
 
         response = model.generate_content(prompt)
 
@@ -362,12 +521,12 @@ def get_gemini_weekly_general() -> dict:
         )
 
         try:
-            model = genai.GenerativeModel(model_name='gemini-1.5-pro', generation_config={'response_mime_type': 'application/json'})
+            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={'response_mime_type': 'application/json'})
         except Exception:
             try:
-                model = genai.GenerativeModel('gemini-1.5-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
             except Exception:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
 
         response = model.generate_content(prompt)
 
@@ -461,9 +620,9 @@ def get_gemini_birthdate(birthdate_str: str) -> dict:
             model = genai.GenerativeModel(model_name='gemini-1.5-pro', generation_config={'response_mime_type': 'application/json'})
         except Exception:
             try:
-                model = genai.GenerativeModel('gemini-1.5-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
             except Exception:
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-2.5-flash')
 
         response = model.generate_content(prompt)
 
