@@ -171,6 +171,31 @@
             transform: scale(1.1);
         }
 
+        /* Favorite channels glow */
+        .fav-glow {
+            border: 1px solid rgba(255, 193, 7, .3) !important;
+            box-shadow: 0 0 15px rgba(255, 193, 7, .15);
+        }
+
+        .fav-glow:hover {
+            box-shadow: 0 0 25px rgba(255, 193, 7, .25);
+        }
+
+        #favorites-section {
+            margin-bottom: 2rem;
+        }
+
+        /* Popular ranking */
+        .popular-card {
+            border: 1px solid #333;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .popular-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(183, 28, 28, .2);
+        }
+
         /* Featured channels */
         .search-wrap {
             max-width: 640px;
@@ -369,6 +394,25 @@
     </div>
     </div>
 
+    <!-- Favorites Section -->
+    <div class="container my-4">
+        <div id="favorites-section"></div>
+    </div>
+
+    <!-- Popular Section -->
+    <div class="container my-4">
+        <div id="popular-section" style="display:none;"></div>
+    </div>
+
+    <!-- Mini TV Schedule Section -->
+    <div class="container my-4">
+        <div class="text-center">
+            <a href="/tv-schedule" class="btn btn-outline-danger btn-lg">
+                <i class="bi bi-calendar3 me-2"></i>ตารางรายการทีวีวันนี้
+            </a>
+        </div>
+    </div>
+
     <!-- Main Container -->
     <div class="container my-4">
         <!-- Category Section -->
@@ -432,6 +476,11 @@
 
     <!-- Bootstrap 5.3 JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/favorites.js"></script>
+    <script src="/static/js/channel_stats.js"></script>
+
+    {% include 'includes/ai_chat.html' %}
+    <script src="/static/js/ai_chat.js"></script>
 
     <script>
         // Featured viewer ticker (simple client-side simulation)

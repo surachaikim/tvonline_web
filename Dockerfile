@@ -1,30 +1,26 @@
-# Use official Python image
-FROM python:3.11-slim
+FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Set work directory
+# Set working directory
 WORKDIR /app
 
 # Install system dependencies
+# ffmpeg is often useful for video apps, though strict TVHUB usage might not need it yet
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libmariadb-dev-compat \
-    libmariadb-dev \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
 
 # Install Python dependencies
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project (includes .env)
+# Copy the rest of the application
 COPY . .
 
-# Expose port
-EXPOSE 5002
+# Expose port 5000
+EXPOSE 5000
 
-# Run the app with gunicorn for production
-CMD ["gunicorn", "-b", "0.0.0.0:5002", "app:app"]
+# Run with Gunicorn (Production server)
+# 4 workers is a good starting point
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]

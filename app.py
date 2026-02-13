@@ -1,10 +1,13 @@
 import logging
 import os
 from dotenv import load_dotenv
+import hashlib
 import json
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
+import requests
+import xml.etree.ElementTree as ET
 from flask import (Flask, Response, abort, render_template, request,
                    send_from_directory, url_for)
 import google.generativeai as genai
@@ -768,6 +771,276 @@ def api_horoscope_birth():
     except Exception as e:
         logging.error(f"/api/horoscope/birth error: {e}")
         return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
+
+# --- AI Movie Recommendation Chat ---
+@app.post('/api/recommend')
+def api_recommend():
+    """AI-powered movie recommendation using Gemini."""
+    try:
+        payload = request.get_json(silent=True) or {}
+        user_msg = (payload.get('message') or '').strip()
+        if not user_msg:
+            return {"error": "กรุณาพิมพ์ข้อความ"}, 400
+
+        today_str = datetime.now().strftime('%Y-%m-%d')
+        msg_hash = hashlib.md5(user_msg.encode()).hexdigest()[:12]
+        cache_key = f"recommend_{msg_hash}_{today_str}"
+        if cache_key in _api_cache:
+            return _api_cache[cache_key], 200
+
+        if not GEMINI_API_KEY:
+            return {"error": "Gemini API ยังไม่ได้ตั้งค่า"}, 500
+
+        # Fetch existing movies from DB for context
+        rows = dbutil.sql_fetchall(
+            "SELECT title, slug, excerpt, rating, tags FROM movie_reviews ORDER BY published_at DESC LIMIT 50"
+        ) or []
+        movie_list = []
+        for r in rows:
+            movie_list.append({
+                'title': r.get('title', ''),
+                'slug': r.get('slug', ''),
+                'rating': float(r.get('rating') or 0),
+                'tags': r.get('tags', ''),
+                'excerpt': (r.get('excerpt') or '')[:100]
+            })
+
+        movie_context = json.dumps(movie_list, ensure_ascii=False) if movie_list else 'ยังไม่มีรีวิวในระบบ'
+
+        prompt = (
+            "คุณคือ AI ผู้เชี่ยวชาญแนะนำหนังและซีรีส์ ชื่อ TVHUB Assistant\n"
+            "ผู้ใช้พิมพ์มาว่า: \"" + user_msg + "\"\n\n"
+            "รายชื่อหนัง/ซีรีส์ที่มีรีวิวในเว็บ TVHUB (ถ้ามี):\n" + movie_context + "\n\n"
+            "กรุณาแนะนำหนัง/ซีรีส์ 3-5 เรื่อง ตอบเป็น JSON เท่านั้น ห้ามมีข้อความอื่นนอก JSON ตามโครงสร้าง:\n"
+            "{\n"
+            "  \"intro\": \"ข้อความต้อนรับสั้นๆ\",\n"
+            "  \"recommendations\": [\n"
+            "    {\"title\": \"ชื่อเรื่อง\", \"rating\": \"8.5\", \"reason\": \"เหตุผลสั้นๆ\", \"slug\": \"slug ถ้ามีในรายชื่อข้างต้น หรือ null\"}\n"
+            "  ],\n"
+            "  \"outro\": \"ข้อความปิดท้าย\"\n"
+            "}"
+        )
+
+        try:
+            model = genai.GenerativeModel(
+                model_name='gemini-2.5-flash',
+                generation_config={'response_mime_type': 'application/json'}
+            )
+        except Exception:
+            model = genai.GenerativeModel('gemini-2.5-flash')
+
+        response = model.generate_content(prompt)
+
+        text = None
+        try:
+            text = response.text if hasattr(response, 'text') else None
+        except Exception:
+            text = None
+        if not text:
+            try:
+                parts = []
+                for c in getattr(response, 'candidates', []) or []:
+                    for p in getattr(c, 'content', {}).parts or []:
+                        if hasattr(p, 'text') and p.text:
+                            parts.append(p.text)
+                text = "\n".join(parts) if parts else None
+            except Exception:
+                text = None
+        if not text:
+            return {"error": "AI ไม่สามารถตอบได้ในขณะนี้"}, 500
+
+        cleaned = re.sub(r'^```json\s*|```\s*$', '', text.strip(), flags=re.IGNORECASE | re.MULTILINE)
+        try:
+            data = json.loads(cleaned)
+        except json.JSONDecodeError:
+            m = re.search(r'\{[\s\S]*\}', cleaned)
+            if not m:
+                return {"error": "AI ตอบกลับในรูปแบบไม่ถูกต้อง"}, 500
+            data = json.loads(m.group(0))
+
+        _api_cache[cache_key] = data
+        return data, 200
+
+    except Exception as e:
+        logging.error(f"/api/recommend error: {e}")
+        return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
+
+
+# --- Channel Click Tracking ---
+_CLICKS_FILE = os.path.join(os.path.dirname(__file__), 'channel_clicks.json')
+
+def _load_clicks():
+    try:
+        with open(_CLICKS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+def _save_clicks(data):
+    try:
+        with open(_CLICKS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logging.error(f"Could not save clicks: {e}")
+
+@app.post('/api/channel-click')
+def api_channel_click():
+    """Track a channel view click."""
+    try:
+        payload = request.get_json(silent=True) or {}
+        name = (payload.get('name') or '').strip()
+        if not name:
+            return {"error": "missing name"}, 400
+        logo = payload.get('logo', '')
+        link = payload.get('link', '')
+
+        clicks = _load_clicks()
+        key = name
+        if key in clicks:
+            clicks[key]['clicks'] = clicks[key].get('clicks', 0) + 1
+        else:
+            clicks[key] = {'name': name, 'logo': logo, 'link': link, 'clicks': 1}
+        _save_clicks(clicks)
+        return {"ok": True}, 200
+    except Exception as e:
+        logging.error(f"/api/channel-click error: {e}")
+        return {"error": str(e)}, 500
+
+@app.get('/api/popular')
+def api_popular():
+    """Return top 10 popular channels."""
+    clicks = _load_clicks()
+    sorted_channels = sorted(clicks.values(), key=lambda x: x.get('clicks', 0), reverse=True)[:10]
+    return {"channels": sorted_channels}, 200
+
+
+# --- TV Schedule (AI-generated) ---
+@app.get('/api/tv-schedule')
+def api_tv_schedule():
+    """Get real TV schedule from EPG XML."""
+    try:
+        day_param = request.args.get('day', 'today')
+        # Simple in-memory cache for XML content
+        global _epg_xml_cache, _epg_last_fetched
+        current_time = time.time()
+        
+        # Check cache (refresh every 1 hour)
+        xml_content = None
+        if '_epg_xml_cache' in globals() and _epg_last_fetched and (current_time - _epg_last_fetched < 3600):
+            xml_content = _epg_xml_cache
+        else:
+            try:
+                url = 'https://akkradet.github.io/IPTV-THAI/guide.xml'
+                resp = requests.get(url, timeout=10)
+                resp.encoding = 'utf-8' # Force UTF-8
+                if resp.status_code == 200:
+                    xml_content = resp.text
+                    _epg_xml_cache = xml_content
+                    _epg_last_fetched = current_time
+            except Exception as e:
+                logging.error(f"Failed to fetch EPG URL: {e}")
+
+        if not xml_content:
+            return {"error": "ไม่สามารถดึงข้อมูลผังรายการได้"}, 500
+
+        # Parse XML
+        try:
+            root = ET.fromstring(xml_content)
+        except ET.ParseError as e:
+            logging.error(f"XML Parse Error: {e}")
+            return {"error": "ข้อมูลผังรายการไม่ถูกต้อง"}, 500
+
+        # Channel Mapping: App ID -> XML ID
+        # Note: XML IDs are case-sensitive. Based on inspection/common pattern.
+        channel_map = {
+            'ch3': '3HD',
+            'ch7': '7HD',
+            'mcot': 'MCOT',
+            'thaipbs': 'TPBS',
+            'one31': 'ONE31',
+            'gmm25': 'GMM25'
+        }
+        
+        # Target channels and their display names
+        target_channels = [
+            {'id': 'ch3', 'name': 'ช่อง 3 HD'},
+            {'id': 'ch7', 'name': 'ช่อง 7 HD'},
+            {'id': 'mcot', 'name': 'MCOT HD'},
+            {'id': 'thaipbs', 'name': 'Thai PBS'},
+            {'id': 'one31', 'name': 'ONE31'},
+            {'id': 'gmm25', 'name': 'GMM25'}
+        ]
+
+        # Determine start/end time for filtering
+        now = datetime.now()
+        if day_param == 'tomorrow':
+            target_date = now + timedelta(days=1)
+        else:
+            target_date = now
+        
+        target_date_str = target_date.strftime('%Y%m%d') # For string comparison
+        
+        result_channels = []
+        
+        for ch_info in target_channels:
+            app_id = ch_info['id']
+            xml_id = channel_map.get(app_id)
+            programs = []
+            
+            if xml_id:
+                # Find programs for this channel
+                # XML Format: start="20231027000000 +0700"
+                for prog in root.findall(f"./programme[@channel='{xml_id}']"):
+                    start = prog.get('start', '')
+                    # Check date match (simple string check first 8 chars)
+                    if start.startswith(target_date_str):
+                        # Parse time
+                        try:
+                            # 20231027060000 +0700 -> 06:00
+                            time_str = start[8:12] # HHMM
+                            formatted_time = f"{time_str[:2]}:{time_str[2:]}"
+                            
+                            title_el = prog.find('title')
+                            title = title_el.text if title_el is not None else ""
+                            
+                            desc_el = prog.find('desc')
+                            desc = desc_el.text if desc_el is not None else ""
+                            
+                            # Simple type detection
+                            p_type = "ทั่วไป"
+                            if "ข่าว" in title or "News" in title: p_type = "ข่าว"
+                            elif "ละคร" in title or "Series" in title: p_type = "ละคร"
+                            elif "หนัง" in title or "Cinema" in title: p_type = "ภาพยนตร์"
+                            elif "การ์ตูน" in title: p_type = "การ์ตูน"
+
+                            programs.append({
+                                'time': formatted_time,
+                                'title': title,
+                                'type': p_type,
+                                'desc': desc
+                            })
+                        except Exception:
+                            continue
+            
+            # Sort by time
+            programs.sort(key=lambda x: x['time'])
+            
+            result_channels.append({
+                'name': ch_info['name'],
+                'programs': programs
+            })
+
+        return {"channels": result_channels}, 200
+
+    except Exception as e:
+        logging.error(f"/api/tv-schedule error: {e}")
+        return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
+
+@app.route('/tv-schedule')
+def tv_schedule_page():
+    """TV Schedule page."""
+    return render_template('tv_schedule.html')
+
 
 # --- Main Execution ---
 if __name__ == '__main__':

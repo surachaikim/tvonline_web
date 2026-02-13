@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      # Persist channel click data on host
+      - ./channel_clicks.json:/app/channel_clicks.json
+    environment:
+      # Pass through environment variables from host or .env file
+      - FLASK_ENV=production
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    restart: unless-stopped
