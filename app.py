@@ -1,14 +1,10 @@
-import logging
 import os
-from dotenv import load_dotenv
-import hashlib
+import logging
 import json
 import re
-import time
-from datetime import datetime, timedelta
-import requests
-import xml.etree.ElementTree as ET
-from flask import (Flask, Response, abort, render_template, request,
+from datetime import datetime
+from dotenv import load_dotenv
+from flask import (Flask, Response, abort, jsonify, render_template, request,
                    send_from_directory, url_for)
 import google.generativeai as genai
 
@@ -18,7 +14,7 @@ from connect_db import db as dbutil
 
 # --- Gemini API Configuration ---
 load_dotenv()
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY','AIzaSyDwnQ_MF1rCJeAn-uTXb_p5TNBYx2d5vvQ')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 if GEMINI_API_KEY:
     try:
         genai.configure(api_key=GEMINI_API_KEY)
@@ -33,8 +29,87 @@ app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key')
 logging.basicConfig(level=logging.INFO)
 
+SITE_NAME = os.getenv('SITE_NAME', 'TVHUB.ONLINE')
+BASE_URL = os.getenv('BASE_URL', 'https://tvhub.online').rstrip('/')
+CHANNELS_FILE = os.path.join(os.path.dirname(__file__), 'data', 'channels.json')
+
 # --- Caching ---
 _api_cache = {}
+
+
+def load_channels():
+    """Load TV channel metadata from the shared JSON data file."""
+    try:
+        with open(CHANNELS_FILE, 'r', encoding='utf-8') as f:
+            channels = json.load(f)
+    except Exception as e:
+        logging.error("Could not load channels data: %s", e)
+        return {}
+    return {item['channel_id'].lower(): item for item in channels if item.get('channel_id')}
+
+
+def get_channel(channel_id):
+    return load_channels().get((channel_id or '').lower())
+
+
+def get_embed_sources(channel_data):
+    return [
+        source for source in channel_data.get('sources', [])
+        if source.get('type') == 'embed' and source.get('url') and source.get('status') != 'inactive'
+    ]
+
+
+def select_embed_source(channel_data, source_id=None):
+    embed_sources = get_embed_sources(channel_data)
+    if source_id:
+        for source in embed_sources:
+            if source.get('id') == source_id:
+                return source
+    for source in embed_sources:
+        if source.get('is_primary'):
+            return source
+    return embed_sources[0] if embed_sources else None
+
+
+def build_home_source_links():
+    source_links = {}
+    for channel in load_channels().values():
+        channel_id = channel.get('channel_id')
+        links = []
+        for source in channel.get('sources', []):
+            if source.get('status') == 'inactive' or not source.get('url'):
+                continue
+            source_type = source.get('type')
+            if source_type == 'embed':
+                href = url_for('live', channel=channel_id, source=source.get('id'))
+                label = 'ดูในเว็บ'
+                external = False
+            elif source_type in ('official', 'external'):
+                href = source.get('url')
+                label = source.get('label') or ('Official' if source_type == 'official' else 'External')
+                external = True
+            else:
+                continue
+            links.append({
+                'id': source.get('id'),
+                'label': label,
+                'type': source_type,
+                'href': href,
+                'external': external,
+            })
+        source_links[channel_id] = links
+    return source_links
+
+
+@app.context_processor
+def inject_site_context():
+    return {
+        'site_name': SITE_NAME,
+        'base_url': BASE_URL,
+        'now': datetime.now,
+        'home_channel_sources': build_home_source_links,
+        'channel_list': lambda: list(load_channels().values()),
+    }
 
 # --- Blueprints & DB Setup ---
 def ensure_tables_and_register_blueprints():
@@ -77,178 +152,39 @@ def homepage():
 
 @app.route('/live/<channel>')
 def live(channel):
-    """Renders the live stream page for a given channel."""
-    return render_template('live.html', channel=channel)
+    """Renders the live stream page for a configured channel."""
+    channel_data = get_channel(channel)
+    if not channel_data:
+        abort(404)
+
+    sources = channel_data.get('sources', [])
+    selected_source = select_embed_source(channel_data, request.args.get('source'))
+    embed_sources = get_embed_sources(channel_data)
+    external_sources = [
+        source for source in sources
+        if source.get('type') in ('official', 'external') and source.get('url') and source.get('status') != 'inactive'
+    ]
+    template_data = dict(channel_data)
+    template_data.update({
+        'stream_link': selected_source['url'] if selected_source else None,
+        'current_source': selected_source,
+        'embed_sources': embed_sources,
+        'external_sources': external_sources,
+    })
+    return render_template('live.html', canonical_url=request.base_url, **template_data)
 
 # --- Legal/Info Pages ---
 @app.route('/privacy')
 def privacy():
-    return render_template('legal/privacy.html')
+    return render_template('privacy.html')
 
 @app.route('/terms')
 def terms():
-    return render_template('legal/terms.html')
+    return render_template('terms.html')
 
 @app.route('/contact')
 def contact():
-    return render_template('legal/contact.html')
-
-@app.route('/live/ch3')
-def live_ch3():
-    """Live Channel 3 HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'ch3',
-        'name': 'ช่อง 3 HD',
-        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 3',
-        'stream_link': 'https://p1.cdn.vet/live/ch3/i/ch3i.m3u8?sid=b5yNTFjZjA3MTBhYzU0YjFlYzhlOQOTY1ZjRjNDg5ZjE0YjI1',
-        'logo': '/static/img/3hd.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-@app.route('/live/ch5')
-def live_ch5():
-    """Live Channel 5 HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'ch5',
-        'name': 'ช่อง 5 HD',
-        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 5',
-        'stream_link': 'https://639bc5877c5fe.streamlock.net/tv5hdlive/tv5hdlive/playlist.m3u8',
-        'logo': '/static/img/channel5.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-@app.route('/live/ch7')
-def live_ch7():
-    """Live Channel 7 HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'ch7',
-        'name': 'ช่อง 7 HD',
-        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง 7',
-        'stream_link': 'http://edge2a.v2h-cdn.com/hd_7/7hd.stream/playlist.m3u8',
-        'logo': '/static/img/ch7-hd.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-@app.route('/live/mcot')
-def live_mcot():
-    """Live Channel MCOT HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'mcot',
-        'name': 'MCOT HD',
-        'description': 'สถานีโทรทัศน์ไทยทีวีสีช่อง MCOT',
-        'stream_link': 'https://p1.cdn.vet/live/ch9/i/ch9i.m3u8?sid=b5yMzA2OTJkMDNjOTg0YmY2NmZhMwNzdlZGQ4NzAzOTg3ZGNh',
-        'logo': '/static/img/mcot-hd.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/thaipbs')
-def live_thaipbs():
-    """Live Channel Thai PBS HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'thaipbs',
-        'name': 'ไทยพีบีเอส HD',
-        'description': 'สถานีโทรทัศน์ไทยพีบีเอส',
-        'stream_link': 'https://edge2a.v2h-cdn.com/tpbs/tpbs.stream/playlist.m3u8',
-        'logo': '/static/img/thaipbs.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/MamaHD')
-def live_MamaHD():
-    """Live Channel Mama HD"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'MamaHD',
-        'name': 'Mama HD',
-        'description': 'สถานีโทรทัศน์ Mama HD',
-        'stream_link': 'http://stv.mediacdn.ru/live/cdn/mama/playlist.m3u8',
-        'logo': '/static/img/cartoon.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/FWTOON')
-def live_FWTOON():
-    """Live Channel FWTOON"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'FWTOON',
-        'name': 'FWTOON',
-        'description': 'สถานีโทรทัศน์ FWTOON',
-        'stream_link': 'https://freelive2.inwstream.com:1936/freelive-edge/fwtoon_fw-iptv.stream/chunks.m3u8?nimblesessionid=187607525&wmsAuthSign=c2VydmVyX3RpbWU9OS8yLzIwMjUgNzoxODo1OSBBTSZoYXNoX3ZhbHVlPTBHS25QK1RwVEMvZHpIN2U4YnJ0T2c9PSZ2YWxpZG1pbnV0ZXM9Mg==',
-        'logo': '/static/img/cartoon.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/4sport')
-def live_4sport():
-    """Live Channel 4 Sport"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': '4sport',
-        'name': '4 Sport',
-        'description': 'สถานีโทรทัศน์ 4 Sport',
-        'stream_link': 'https://pepsi.abntv.live/hls/4spstream.m3u8',
-        'logo': '/static/img/cartoon.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/manyok')
-def live_manyok():
-    """Live Channel Manyok Channel"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'manyok',
-        'name': 'Manyok Channel',
-        'description': 'สถานีโทรทัศน์ Manyok Channel',
-        'stream_link': 'https://playball.fun/hls/manyok.m3u8',
-        'logo': '/static/img/MANYOK TV.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
-
-@app.route('/live/kids')
-def live_kids():
-    """Live Channel Kids"""
-    # Channel data to pass to template
-    channel_data = {
-        'channel_id': 'kids',
-        'name': 'Kids Channel',
-        'description': 'สถานีโทรทัศน์ Kids Channel',
-        'stream_link': 'https://playball.fun/hls/kids.m3u8',
-        'logo': '/static/img/kids logo.png',
-        'isLive': True
-    }
-    
-    return render_template('live.html', canonical_url=request.base_url, **channel_data)
-
+    return render_template('contact.html')
 
 # --- SEO & Static Files ---
 @app.route('/sitemap.xml')
@@ -772,100 +708,6 @@ def api_horoscope_birth():
         logging.error(f"/api/horoscope/birth error: {e}")
         return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
 
-# --- AI Movie Recommendation Chat ---
-@app.post('/api/recommend')
-def api_recommend():
-    """AI-powered movie recommendation using Gemini."""
-    try:
-        payload = request.get_json(silent=True) or {}
-        user_msg = (payload.get('message') or '').strip()
-        if not user_msg:
-            return {"error": "กรุณาพิมพ์ข้อความ"}, 400
-
-        today_str = datetime.now().strftime('%Y-%m-%d')
-        msg_hash = hashlib.md5(user_msg.encode()).hexdigest()[:12]
-        cache_key = f"recommend_{msg_hash}_{today_str}"
-        if cache_key in _api_cache:
-            return _api_cache[cache_key], 200
-
-        if not GEMINI_API_KEY:
-            return {"error": "Gemini API ยังไม่ได้ตั้งค่า"}, 500
-
-        # Fetch existing movies from DB for context
-        rows = dbutil.sql_fetchall(
-            "SELECT title, slug, excerpt, rating, tags FROM movie_reviews ORDER BY published_at DESC LIMIT 50"
-        ) or []
-        movie_list = []
-        for r in rows:
-            movie_list.append({
-                'title': r.get('title', ''),
-                'slug': r.get('slug', ''),
-                'rating': float(r.get('rating') or 0),
-                'tags': r.get('tags', ''),
-                'excerpt': (r.get('excerpt') or '')[:100]
-            })
-
-        movie_context = json.dumps(movie_list, ensure_ascii=False) if movie_list else 'ยังไม่มีรีวิวในระบบ'
-
-        prompt = (
-            "คุณคือ AI ผู้เชี่ยวชาญแนะนำหนังและซีรีส์ ชื่อ TVHUB Assistant\n"
-            "ผู้ใช้พิมพ์มาว่า: \"" + user_msg + "\"\n\n"
-            "รายชื่อหนัง/ซีรีส์ที่มีรีวิวในเว็บ TVHUB (ถ้ามี):\n" + movie_context + "\n\n"
-            "กรุณาแนะนำหนัง/ซีรีส์ 3-5 เรื่อง ตอบเป็น JSON เท่านั้น ห้ามมีข้อความอื่นนอก JSON ตามโครงสร้าง:\n"
-            "{\n"
-            "  \"intro\": \"ข้อความต้อนรับสั้นๆ\",\n"
-            "  \"recommendations\": [\n"
-            "    {\"title\": \"ชื่อเรื่อง\", \"rating\": \"8.5\", \"reason\": \"เหตุผลสั้นๆ\", \"slug\": \"slug ถ้ามีในรายชื่อข้างต้น หรือ null\"}\n"
-            "  ],\n"
-            "  \"outro\": \"ข้อความปิดท้าย\"\n"
-            "}"
-        )
-
-        try:
-            model = genai.GenerativeModel(
-                model_name='gemini-2.5-flash',
-                generation_config={'response_mime_type': 'application/json'}
-            )
-        except Exception:
-            model = genai.GenerativeModel('gemini-2.5-flash')
-
-        response = model.generate_content(prompt)
-
-        text = None
-        try:
-            text = response.text if hasattr(response, 'text') else None
-        except Exception:
-            text = None
-        if not text:
-            try:
-                parts = []
-                for c in getattr(response, 'candidates', []) or []:
-                    for p in getattr(c, 'content', {}).parts or []:
-                        if hasattr(p, 'text') and p.text:
-                            parts.append(p.text)
-                text = "\n".join(parts) if parts else None
-            except Exception:
-                text = None
-        if not text:
-            return {"error": "AI ไม่สามารถตอบได้ในขณะนี้"}, 500
-
-        cleaned = re.sub(r'^```json\s*|```\s*$', '', text.strip(), flags=re.IGNORECASE | re.MULTILINE)
-        try:
-            data = json.loads(cleaned)
-        except json.JSONDecodeError:
-            m = re.search(r'\{[\s\S]*\}', cleaned)
-            if not m:
-                return {"error": "AI ตอบกลับในรูปแบบไม่ถูกต้อง"}, 500
-            data = json.loads(m.group(0))
-
-        _api_cache[cache_key] = data
-        return data, 200
-
-    except Exception as e:
-        logging.error(f"/api/recommend error: {e}")
-        return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
-
-
 # --- Channel Click Tracking ---
 _CLICKS_FILE = os.path.join(os.path.dirname(__file__), 'channel_clicks.json')
 
@@ -913,133 +755,20 @@ def api_popular():
     sorted_channels = sorted(clicks.values(), key=lambda x: x.get('clicks', 0), reverse=True)[:10]
     return {"channels": sorted_channels}, 200
 
-
-# --- TV Schedule (AI-generated) ---
-@app.get('/api/tv-schedule')
-def api_tv_schedule():
-    """Get real TV schedule from EPG XML."""
-    try:
-        day_param = request.args.get('day', 'today')
-        # Simple in-memory cache for XML content
-        global _epg_xml_cache, _epg_last_fetched
-        current_time = time.time()
-        
-        # Check cache (refresh every 1 hour)
-        xml_content = None
-        if '_epg_xml_cache' in globals() and _epg_last_fetched and (current_time - _epg_last_fetched < 3600):
-            xml_content = _epg_xml_cache
-        else:
-            try:
-                url = 'https://akkradet.github.io/IPTV-THAI/guide.xml'
-                resp = requests.get(url, timeout=10)
-                resp.encoding = 'utf-8' # Force UTF-8
-                if resp.status_code == 200:
-                    xml_content = resp.text
-                    _epg_xml_cache = xml_content
-                    _epg_last_fetched = current_time
-            except Exception as e:
-                logging.error(f"Failed to fetch EPG URL: {e}")
-
-        if not xml_content:
-            return {"error": "ไม่สามารถดึงข้อมูลผังรายการได้"}, 500
-
-        # Parse XML
-        try:
-            root = ET.fromstring(xml_content)
-        except ET.ParseError as e:
-            logging.error(f"XML Parse Error: {e}")
-            return {"error": "ข้อมูลผังรายการไม่ถูกต้อง"}, 500
-
-        # Channel Mapping: App ID -> XML ID
-        # Note: XML IDs are case-sensitive. Based on inspection/common pattern.
-        channel_map = {
-            'ch3': '3HD',
-            'ch7': '7HD',
-            'mcot': 'MCOT',
-            'thaipbs': 'TPBS',
-            'one31': 'ONE31',
-            'gmm25': 'GMM25'
-        }
-        
-        # Target channels and their display names
-        target_channels = [
-            {'id': 'ch3', 'name': 'ช่อง 3 HD'},
-            {'id': 'ch7', 'name': 'ช่อง 7 HD'},
-            {'id': 'mcot', 'name': 'MCOT HD'},
-            {'id': 'thaipbs', 'name': 'Thai PBS'},
-            {'id': 'one31', 'name': 'ONE31'},
-            {'id': 'gmm25', 'name': 'GMM25'}
-        ]
-
-        # Determine start/end time for filtering
-        now = datetime.now()
-        if day_param == 'tomorrow':
-            target_date = now + timedelta(days=1)
-        else:
-            target_date = now
-        
-        target_date_str = target_date.strftime('%Y%m%d') # For string comparison
-        
-        result_channels = []
-        
-        for ch_info in target_channels:
-            app_id = ch_info['id']
-            xml_id = channel_map.get(app_id)
-            programs = []
-            
-            if xml_id:
-                # Find programs for this channel
-                # XML Format: start="20231027000000 +0700"
-                for prog in root.findall(f"./programme[@channel='{xml_id}']"):
-                    start = prog.get('start', '')
-                    # Check date match (simple string check first 8 chars)
-                    if start.startswith(target_date_str):
-                        # Parse time
-                        try:
-                            # 20231027060000 +0700 -> 06:00
-                            time_str = start[8:12] # HHMM
-                            formatted_time = f"{time_str[:2]}:{time_str[2:]}"
-                            
-                            title_el = prog.find('title')
-                            title = title_el.text if title_el is not None else ""
-                            
-                            desc_el = prog.find('desc')
-                            desc = desc_el.text if desc_el is not None else ""
-                            
-                            # Simple type detection
-                            p_type = "ทั่วไป"
-                            if "ข่าว" in title or "News" in title: p_type = "ข่าว"
-                            elif "ละคร" in title or "Series" in title: p_type = "ละคร"
-                            elif "หนัง" in title or "Cinema" in title: p_type = "ภาพยนตร์"
-                            elif "การ์ตูน" in title: p_type = "การ์ตูน"
-
-                            programs.append({
-                                'time': formatted_time,
-                                'title': title,
-                                'type': p_type,
-                                'desc': desc
-                            })
-                        except Exception:
-                            continue
-            
-            # Sort by time
-            programs.sort(key=lambda x: x['time'])
-            
-            result_channels.append({
-                'name': ch_info['name'],
-                'programs': programs
-            })
-
-        return {"channels": result_channels}, 200
-
-    except Exception as e:
-        logging.error(f"/api/tv-schedule error: {e}")
-        return {"error": "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"}, 500
-
-@app.route('/tv-schedule')
-def tv_schedule_page():
-    """TV Schedule page."""
-    return render_template('tv_schedule.html')
+@app.get('/api/channels/<channel>')
+def api_channel(channel):
+    channel_data = get_channel(channel)
+    if not channel_data:
+        return {"error": "channel not found"}, 404
+    public_data = {
+        k: v for k, v in channel_data.items()
+        if k not in ('stream_link',)
+    }
+    public_data['sources'] = [
+        {k: v for k, v in source.items() if not (source.get('type') == 'embed' and k == 'url')}
+        for source in channel_data.get('sources', [])
+    ]
+    return jsonify(public_data)
 
 
 # --- Main Execution ---

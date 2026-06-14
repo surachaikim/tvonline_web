@@ -43,8 +43,7 @@ def list_movies():
 
 @bp.route('/movies/<slug>')
 def detail_movie(slug):
-    safe_slug = slug.replace("'", "''")
-    row = dbutil.sql_fetchone(f"SELECT * FROM movie_reviews WHERE slug='{safe_slug}'")
+    row = dbutil.sql_fetchone_params("SELECT * FROM movie_reviews WHERE slug=%s", (slug,))
     if not row:
         abort(404)
     review = dict(row)
@@ -86,7 +85,8 @@ def api_create_movie_review():
         data.get('published_at'),
     )
     try:
-        dbutil.sql_commit(sql, params)
+        if not dbutil.sql_commit(sql, params):
+            return jsonify({"error": "database write failed"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     return jsonify({"status": "created", "slug": data.get('slug')}), 201
@@ -113,7 +113,8 @@ def api_update_movie_review(slug):
     sql = "UPDATE movie_reviews SET " + ", ".join(fields) + " WHERE slug=%s"
     params.append(slug)
     try:
-        dbutil.sql_commit(sql, tuple(params))
+        if not dbutil.sql_commit(sql, tuple(params)):
+            return jsonify({"error": "database write failed"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     return jsonify({"status": "updated"})
@@ -123,7 +124,8 @@ def api_update_movie_review(slug):
 def api_delete_movie_review(slug):
     sql = "DELETE FROM movie_reviews WHERE slug=%s"
     try:
-        dbutil.sql_commit(sql, (slug,))
+        if not dbutil.sql_commit(sql, (slug,)):
+            return jsonify({"error": "database write failed"}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     return jsonify({"status": "deleted"})

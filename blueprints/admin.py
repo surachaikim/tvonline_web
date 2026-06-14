@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from functools import wraps
 from connect_db import db as dbutil
+import hmac
 import json
 import os
 
@@ -24,8 +25,11 @@ def login_required(f):
 def login():
     if request.method == 'POST':
         password = request.form.get('password', '')
-        expected = os.getenv('ADMIN_PASSWORD', 'admin123')
-        if password == expected:
+        expected = os.getenv('ADMIN_PASSWORD')
+        if not expected:
+            flash('ยังไม่ได้ตั้งค่า ADMIN_PASSWORD', 'danger')
+            return render_template('admin/login.html')
+        if hmac.compare_digest(password, expected):
             session['admin_logged_in'] = True
             next_url = request.args.get('next') or url_for('admin.dashboard')
             return redirect(next_url)
@@ -97,7 +101,8 @@ def reviews_create():
                 data['title'], data['slug'], data['excerpt'], data['cover_image'] or None,
                 data['rating'], tags, body_json, data['published_at']
             )
-            dbutil.sql_commit(sql, params)
+            if not dbutil.sql_commit(sql, params):
+                raise RuntimeError('database write failed')
             flash('บันทึกเรียบร้อย', 'success')
             return redirect(url_for('admin.reviews_list'))
         except Exception as e:
@@ -126,7 +131,8 @@ def reviews_edit(slug):
         fields = ["title=%s","excerpt=%s","cover_image=%s","rating=%s","tags=%s","body=%s","published_at=%s"]
         params = (data['title'], data['excerpt'], data['cover_image'] or None, data['rating'], tags, body_json, data['published_at'], slug)
         try:
-            dbutil.sql_commit("UPDATE movie_reviews SET "+", ".join(fields)+" WHERE slug=%s", params)
+            if not dbutil.sql_commit("UPDATE movie_reviews SET "+", ".join(fields)+" WHERE slug=%s", params):
+                raise RuntimeError('database write failed')
             flash('แก้ไขเรียบร้อย', 'success')
             return redirect(url_for('admin.reviews_list'))
         except Exception as e:
@@ -144,7 +150,8 @@ def reviews_edit(slug):
 @login_required
 def reviews_delete(slug):
     try:
-        dbutil.sql_commit("DELETE FROM movie_reviews WHERE slug=%s", (slug,))
+        if not dbutil.sql_commit("DELETE FROM movie_reviews WHERE slug=%s", (slug,)):
+            raise RuntimeError('database write failed')
         flash('ลบเรียบร้อย', 'success')
     except Exception as e:
         flash(f'ลบล้มเหลว: {e}', 'danger')
@@ -178,8 +185,8 @@ def import_json():
                                 json.dumps(item.get('body', []), ensure_ascii=False),
                                 item.get('published_at'),
                             )
-                            dbutil.sql_commit(sql, params)
-                            inserted += 1
+                            if dbutil.sql_commit(sql, params):
+                                inserted += 1
                         except Exception:
                             continue
                     flash(f'นำเข้า {inserted} รายการ', 'success')

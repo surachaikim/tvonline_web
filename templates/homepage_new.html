@@ -5,520 +5,447 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ดูทีวีออนไลน์ สด ครบทุกช่อง | TVHUB</title>
-    <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-    <!-- Favicon -->
-    <link rel="icon" href="/static/img/tvhublogo.png" type="image/png">
-    <link rel="apple-touch-icon" href="/static/img/tvhublogo.png">
-
-    <!-- SEO -->
     <meta name="description"
-        content="{{ meta_description or 'ดูทีวีออนไลน์ สด ครบทุกช่อง รวมข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ พร้อมลิงก์ทางการจากทุกช่อง ดูสดได้ 24 ชั่วโมง' }}">
-    <meta name="keywords"
-        content="ทีวีออนไลน์, ดูทีวีสด, ทีวีไทย, ถ่ายทอดสด, ข่าว, กีฬา, บันเทิง, Thai TV online, live TV">
+        content="{{ meta_description or 'ดูทีวีออนไลน์สด รวมช่องทีวีไทย ข่าว กีฬา การ์ตูน และลิงก์รับชมจากหลายแหล่ง ใช้งานง่ายบนมือถือและเดสก์ท็อป' }}">
+    <meta name="keywords" content="ทีวีออนไลน์, ดูทีวีสด, ทีวีไทย, ถ่ายทอดสด, live TV, TVHUB">
     <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#b71c1c">
+    <meta name="theme-color" content="#e50914">
     <link rel="canonical" href="{{ canonical_url or request.base_url }}">
     <link rel="alternate" href="{{ canonical_url or request.base_url }}" hreflang="th">
 
-    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ site_name }}">
     <meta property="og:title" content="ดูทีวีออนไลน์ สด ครบทุกช่อง | {{ site_name }}">
-    <meta property="og:description"
-        content="ดูทีวีออนไลน์ สด ครบทุกช่อง ข่าว บันเทิง กีฬา เด็ก เพลง ไลฟ์สไตล์ 24 ชั่วโมง">
+    <meta property="og:description" content="รวมช่องทีวีออนไลน์ ดูสดง่าย เลือกแหล่งรับชมได้ในหน้าแรก">
     <meta property="og:url" content="{{ canonical_url or request.base_url }}">
-    <meta property="og:image" content="{{ url_for('static', filename='img/thaipbs.png', _external=True) }}">
+    <meta property="og:image" content="{{ url_for('static', filename='img/tvhublogo.png', _external=True) }}">
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ดูทีวีออนไลน์ สด ครบทุกช่อง | {{ site_name }}">
-    <meta name="twitter:description" content="ดูสดช่องทีวีไทย รวมลิงก์ทางการ ใช้งานง่าย บนมือถือและเดสก์ท็อป">
-    <meta name="twitter:image" content="{{ url_for('static', filename='img/thaipbs.png', _external=True) }}">
+    <link rel="icon" href="/static/img/tvhublogo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/static/img/tvhublogo.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-    <!-- Google AdSense (Auto ads) - replace ca-pub-XXXXXXXXXXXXXXX with your Publisher ID -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXX"
-        crossorigin="anonymous"></script>
-
-    <!-- Google Site Verification (optional): replace with your verification token -->
-    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_TOKEN" /> -->
-
-    <!-- JSON-LD -->
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "{{ site_name }}",
-            "url": "{{ base_url }}/",
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": "{{ base_url }}/?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-            }
+            "url": "{{ base_url }}/"
         }
-        </script>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "{{ site_name }}",
-            "url": "{{ base_url }}/",
-            "logo": "{{ url_for('static', filename='img/thaipbs.png', _external=True) }}"
-        }
-        </script>
+    </script>
 
-    <!-- Custom Styling -->
     <style>
-        /* Hero */
-        .hero {
-            background: radial-gradient(1200px 400px at 10% -10%, #6ea8fe33, transparent),
-                radial-gradient(1200px 400px at 110% 10%, #e37fff33, transparent),
-                linear-gradient(135deg, #0d6efd, #6f42c1);
-            color: #fff;
-            border-radius: 1rem;
+        :root {
+            --bg: #08090c;
+            --surface: #12141a;
+            --surface-2: #191c24;
+            --line: rgba(255, 255, 255, .1);
+            --muted: #aeb4c0;
+            --text: #f8fafc;
+            --brand: #e50914;
+            --brand-2: #ff4b55;
         }
 
-        .hero h1 {
-            letter-spacing: .5px;
+        * {
+            letter-spacing: 0;
         }
 
-        /* Custom colors for badges */
-        .bg-pink {
-            background-color: #e91e63 !important;
-        }
-
-        /* Enhanced card hover effects */
-        .card {
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Custom nav-pills styling */
-        .nav-pills .nav-link {
-            border-radius: 50px;
-            padding: 10px 20px;
-            margin: 0 2px;
-        }
-
-        .nav-pills .nav-link.active {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-        }
-
-        /* Enhanced navbar */
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        /* Smooth animations */
-        .tab-pane {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Badge enhancements */
-        .badge {
-            font-size: 0.75rem;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-
-        /* Footer enhancements */
-        footer a:hover {
-            transform: scale(1.2);
-            transition: transform 0.2s;
-        }
-
-        /* News buttons styling */
-        .btn-outline-secondary {
-            margin: 5px;
-            border-radius: 25px;
-            padding: 8px 16px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-width: 2px;
-        }
-
-        .btn-outline-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-
-        .btn-outline-secondary i {
-            transition: transform 0.3s ease;
-        }
-
-        .btn-outline-secondary:hover i {
-            transform: scale(1.1);
-        }
-
-        /* Favorite channels glow */
-        .fav-glow {
-            border: 1px solid rgba(255, 193, 7, .3) !important;
-            box-shadow: 0 0 15px rgba(255, 193, 7, .15);
-        }
-
-        .fav-glow:hover {
-            box-shadow: 0 0 25px rgba(255, 193, 7, .25);
-        }
-
-        #favorites-section {
-            margin-bottom: 2rem;
-        }
-
-        /* Popular ranking */
-        .popular-card {
-            border: 1px solid #333;
-            transition: transform .2s, box-shadow .2s;
-        }
-
-        .popular-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(183, 28, 28, .2);
-        }
-
-        /* Featured channels */
-        .search-wrap {
-            max-width: 640px;
-            margin-inline: auto;
-        }
-
-        .channel-card img.logo {
-            height: 64px;
-            object-fit: contain;
-        }
-
-        .channel-card .card-body {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .channel-card .actions {
-            margin-left: auto;
-        }
-
-        /* === Dark/Red/White Theme Overrides === */
         body {
-            background: #111;
-            color: #fff;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(229, 9, 20, .22), transparent 34rem),
+                radial-gradient(circle at 90% 12%, rgba(255, 255, 255, .08), transparent 28rem),
+                var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Navbar */
-        .navbar,
-        .navbar.bg-primary,
-        .navbar-dark.bg-primary {
-            background-color: #000 !important;
+        .navbar {
+            background: rgba(8, 9, 12, .86);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
         }
 
-        .navbar .navbar-brand,
-        .navbar .nav-link {
+        .navbar-brand {
+            font-size: 1.35rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, .78) !important;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
             color: #fff !important;
         }
 
-        .navbar .nav-link:hover,
-        .navbar .nav-link.active {
-            color: #b71c1c !important;
-        }
-
-        /* Hero */
         .hero {
-            background: linear-gradient(135deg, #000 55%, #b71c1c 100%);
+            padding: 42px 0 24px;
+        }
+
+        .hero-shell {
+            background: linear-gradient(145deg, rgba(255, 255, 255, .09), rgba(255, 255, 255, .035));
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: clamp(24px, 5vw, 48px);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, .34);
+        }
+
+        .eyebrow {
+            color: #ffd6d8;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: .78rem;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 4vw, 3.6rem);
+            font-weight: 800;
+            line-height: 1.08;
+        }
+
+        .hero-copy {
+            color: var(--muted);
+            max-width: 720px;
+            font-size: 1.06rem;
+        }
+
+        .stat-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 26px;
+            max-width: 680px;
+        }
+
+        .stat-pill {
+            background: rgba(0, 0, 0, .28);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px 14px;
+        }
+
+        .stat-pill strong {
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .stat-pill span {
+            color: var(--muted);
+            font-size: .86rem;
+        }
+
+        .search-panel {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: -6px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, .22);
+        }
+
+        .search-panel .form-control {
+            background: #0d0f14;
+            border: 1px solid var(--line);
+            color: #fff;
+            min-height: 48px;
+        }
+
+        .search-panel .form-control::placeholder {
+            color: #7f8794;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2,
+        .section-title h3 {
+            font-size: clamp(1.35rem, 2.4vw, 2rem);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .section-title p {
+            color: var(--muted);
+            margin: 5px 0 0;
+        }
+
+        .nav-pills,
+        .nav-tabs {
+            gap: 8px;
+            border: 0;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+
+        .nav-pills .nav-link,
+        .nav-tabs .nav-link {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            color: #fff;
+            border-radius: 999px;
+            white-space: nowrap;
+            padding: 10px 16px;
+        }
+
+        .nav-pills .nav-link.active,
+        .nav-tabs .nav-link.active {
+            background: var(--brand);
+            border-color: var(--brand);
             color: #fff;
         }
 
-        /* Cards */
         .card {
-            background: #1b1b1b;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
             color: #fff;
-            border: 1px solid #2a2a2a;
-            transition: transform .2s ease, box-shadow .2s ease;
+            box-shadow: 0 12px 34px rgba(0, 0, 0, .18);
         }
 
         .card:hover {
-            box-shadow: 0 8px 20px rgba(183, 28, 28, .25);
+            transform: translateY(-3px);
+            border-color: rgba(229, 9, 20, .45);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, .28);
         }
 
-        .card .text-muted {
-            color: #b0b0b0 !important;
+        .card-img-top {
+            filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .26));
         }
 
-        /* Tabs (pills + tabs) */
-        .nav-pills .nav-link {
-            background: #1e1e1e;
-            color: #fff;
+        .card-title {
+            font-weight: 800;
+            min-height: 2.2em;
         }
 
-        .nav-pills .nav-link.active {
-            background: #b71c1c;
-            color: #fff;
+        .card-body p {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: 10px;
         }
 
-        .nav-tabs .nav-link {
-            color: #eee;
-            background: #1e1e1e;
-            border-color: #333;
+        .btn {
+            border-radius: 10px;
+            font-weight: 700;
         }
 
-        .nav-tabs .nav-link.active {
-            color: #fff;
-            background: #b71c1c;
-            border-color: #b71c1c;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: #b71c1c;
-            border-color: #b71c1c;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #fff;
-            color: #b71c1c;
-            border-color: #b71c1c;
-        }
-
-        .btn-outline-primary {
-            color: #b71c1c;
-            border-color: #b71c1c;
-        }
-
-        .btn-outline-primary:hover {
-            background: #b71c1c;
-            color: #fff;
-        }
-
-        /* Unify outline-danger to theme red */
-        .btn-outline-danger {
-            color: #b71c1c;
-            border-color: #b71c1c;
-        }
-
-        .btn-outline-danger:hover {
-            background: #b71c1c;
-            color: #fff;
-        }
-
-        /* Make sports outline-success follow theme red */
-        .btn-outline-success {
-            color: #b71c1c;
-            border-color: #b71c1c;
-        }
-
+        .btn-primary,
+        .btn-outline-primary:hover,
         .btn-outline-success:hover {
-            background: #b71c1c;
+            background: var(--brand);
+            border-color: var(--brand);
+        }
+
+        .btn-outline-primary,
+        .btn-outline-success {
+            color: #fff;
+            border-color: rgba(229, 9, 20, .72);
+        }
+
+        .btn-outline-secondary {
+            color: #dbe2ee;
+            border-color: rgba(255, 255, 255, .18);
+            background: rgba(255, 255, 255, .035);
+        }
+
+        .btn-outline-secondary:hover {
+            background: rgba(255, 255, 255, .1);
+            border-color: rgba(255, 255, 255, .35);
             color: #fff;
         }
 
-        /* Footer */
-        footer.bg-dark {
-            background: #000 !important;
-            color: #fff;
+        .source-actions {
+            display: grid;
+            gap: 6px;
+        }
+
+        .tab-content {
+            margin-top: 18px;
+        }
+
+        #favorites-section,
+        #popular-section {
+            margin-bottom: 24px;
+        }
+
+        .fav-glow {
+            border-color: rgba(255, 193, 7, .36) !important;
+            box-shadow: 0 0 18px rgba(255, 193, 7, .12);
+        }
+
+        .utility-band {
+            background: rgba(255, 255, 255, .035);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            padding: 34px 0;
+            margin-top: 46px;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            background: #06070a;
         }
 
         footer a {
-            color: #fff;
+            color: rgba(255, 255, 255, .75);
         }
 
         footer a:hover {
-            color: #b71c1c;
+            color: #fff;
+        }
+
+        .is-hidden-by-search {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding-top: 24px;
+            }
+
+            .stat-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                display: block;
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Bootstrap Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-tv me-2"></i>TVHUB
+                <i class="bi bi-tv-fill me-2 text-danger"></i>TVHUB
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/reviews/movies"><i
-                                class="bi bi-star-half me-1"></i>รีวิวหนัง</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/horoscope"><i
-                                class="bi bi-moon-stars me-1"></i>ดูดวง</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tv-section">ช่องทีวี</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#more-section">บริการอื่น ๆ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/reviews/movies">รีวิวหนัง</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/horoscope/">ดูดวง</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero -->
-    <div class="container mt-4">
-        <div class="hero p-4 p-md-5 shadow-sm">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-8">
-                    <h1 class="display-6 mb-2">ดูทีวีออนไลน์ สด คมชัด ลื่นไหล</h1>
-                    <p class="mb-3 mb-lg-4 opacity-75">รวมช่องทีวีฮิต ครบ จบที่เดียว รองรับมือถือและทีวี</p>
-                    <!-- Featured News Carousel Section Removed -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-shell">
+                <div class="eyebrow mb-2">Live TV Directory</div>
+                <h1>ดูทีวีออนไลน์ เลือกช่องทางรับชมได้ทันที</h1>
+                <p class="hero-copy mt-3">
+                    รวมช่องทีวีไทยและลิงก์รับชมจากหลายแหล่งไว้ในหน้าเดียว เลือกดูผ่าน Player ในเว็บหรือเว็บต้นทางได้จากการ์ดช่องโดยตรง
+                </p>
+                <div class="stat-strip">
+                    <div class="stat-pill">
+                        <strong>30+</strong>
+                        <span>ช่องและแหล่งรับชม</span>
+                    </div>
+                    <div class="stat-pill">
+                        <strong>Player / Official</strong>
+                        <span>แยกประเภทชัดเจน</span>
+                    </div>
+                    <div class="stat-pill">
+                        <strong>Mobile Ready</strong>
+                        <span>ใช้ง่ายบนมือถือ</span>
+                    </div>
                 </div>
             </div>
 
+            <div class="search-panel">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 text-danger">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input id="channel-search" class="form-control" type="search"
+                        placeholder="ค้นหาช่อง เช่น ช่อง 3, PPTV, ข่าว, กีฬา">
+                </div>
+            </div>
+        </div>
+    </header>
 
+    <main>
+        <section class="container my-4">
+            <div id="favorites-section"></div>
+            <div id="popular-section" style="display:none;"></div>
+        </section>
 
-            <div class="carousel-item">
-                <div class="ratio ratio-16x9">
-                    <iframe src="https://www.thaipbs.or.th/news" title="BBC Thai News" frameborder="0" allowfullscreen
-                        style="border-radius: 12px;"></iframe>
+        <section class="container my-5" id="tv-section">
+            <div class="section-title">
+                <div>
+                    <h2><i class="bi bi-tv me-2 text-danger"></i>ช่องทีวีออนไลน์</h2>
+                    <p>หน้าแรกแสดงช่องละหนึ่งใบ แล้วเลือก Player / Official / External ได้จากการ์ด</p>
                 </div>
             </div>
 
+            {% include 'tabs/tv_navigation.html' %}
+            {% include 'tabs/tv_content.html' %}
+        </section>
 
-        </div>
-
-    </div>
-    </div>
-
-    <!-- Favorites Section -->
-    <div class="container my-4">
-        <div id="favorites-section"></div>
-    </div>
-
-    <!-- Popular Section -->
-    <div class="container my-4">
-        <div id="popular-section" style="display:none;"></div>
-    </div>
-
-    <!-- Mini TV Schedule Section -->
-    <div class="container my-4">
-        <div class="text-center">
-            <a href="/tv-schedule" class="btn btn-outline-danger btn-lg">
-                <i class="bi bi-calendar3 me-2"></i>ตารางรายการทีวีวันนี้
-            </a>
-        </div>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container my-4">
-        <!-- Category Section -->
-        <div class="row">
-            <div class="col-12">
-                <h2 class="mb-4 text-center">
-                    <i class="bi bi-grid-3x3-gap me-2"></i>หมวดหมู่รายการ
-                </h2>
-
-                <!-- Category Navigation -->
+        <section class="utility-band" id="more-section">
+            <div class="container">
+                <div class="section-title">
+                    <div>
+                        <h3><i class="bi bi-grid-3x3-gap me-2 text-danger"></i>บริการอื่น ๆ</h3>
+                        <p>ลิงก์ข่าว บันเทิง กีฬา เพลง วิทยุ และเครื่องมือที่ใช้บ่อย</p>
+                    </div>
+                </div>
                 {% include 'tabs/category_navigation.html' %}
-
-                <!-- Category Tab Content -->
                 {% include 'tabs/category_content.html' %}
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- TV Channels Section -->
-    <div class="container my-5">
-        <div class="row mb-5">
-            <div class="col-12">
-                <h3 class="mb-4 text-center">
-                    <i class="bi bi-tv me-2"></i>ช่องทีวีออนไลน์
-                </h3>
-
-                <!-- TV Navigation -->
-                {% include 'tabs/tv_navigation.html' %}
-
-                <!-- TV Tab Content -->
-                {% include 'tabs/tv_content.html' %}
+    <footer class="py-4 mt-5">
+        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+            <div>
+                <div class="fw-bold"><i class="bi bi-tv-fill me-2 text-danger"></i>TVHUB</div>
+                <div class="small text-secondary">รวมช่องทีวีออนไลน์และแหล่งรับชมในที่เดียว</div>
             </div>
-        </div>
-    </div>
-
-    </div>
-
-    <!-- Bootstrap Footer -->
-    <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>
-                        <i class="bi bi-tv me-2"></i>TVHUB
-
-                    </h5>
-                    <p class="mb-0">ทีวีออนไลน์ครบครันทุกรายการ</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <div class="small mb-2">
-                        <a href="/privacy" class="text-decoration-none text-light me-3">นโยบายความเป็นส่วนตัว</a>
-                        <a href="/terms" class="text-decoration-none text-light me-3">ข้อกำหนดการใช้งาน</a>
-                        <a href="/about" class="text-decoration-none text-light me-3">เกี่ยวกับเรา</a>
-                        <a href="/contact" class="text-decoration-none text-light">ติดต่อเรา</a>
-                    </div>
-                    <div id="histats_counter"></div>
-                </div>
+            <div class="small">
+                <a href="/privacy" class="text-decoration-none me-3">นโยบายความเป็นส่วนตัว</a>
+                <a href="/terms" class="text-decoration-none me-3">ข้อกำหนดการใช้งาน</a>
+                <a href="/contact" class="text-decoration-none">ติดต่อ</a>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap 5.3 JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/favorites.js"></script>
     <script src="/static/js/channel_stats.js"></script>
-
-    {% include 'includes/ai_chat.html' %}
-    <script src="/static/js/ai_chat.js"></script>
-
     <script>
-        // Featured viewer ticker (simple client-side simulation)
-        (function () {
-            const el = document.getElementById('top-viewers');
-            if (!el) return;
-            let n = parseInt(el.textContent.replace(/,/g, '')) || 3200;
-            function tick() {
-                const delta = Math.floor(Math.random() * 15) - 7; // -7..+7
-                n = Math.max(500, n + delta);
-                el.textContent = n.toLocaleString();
-            }
-            setInterval(tick, 30000);
-        })();
+        const searchInput = document.getElementById('channel-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const q = this.value.trim().toLowerCase();
+                document.querySelectorAll('#tvTabContent .col').forEach(function (col) {
+                    const text = col.textContent.toLowerCase();
+                    col.classList.toggle('is-hidden-by-search', q && !text.includes(q));
+                });
+            });
+        }
 
-        // Bootstrap handles tab functionality automatically
-        // Additional custom JavaScript can be added here if needed
-
-        // Optional: Add smooth scrolling for better UX
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
-                e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
+                if (!target) return;
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
 
-        // Optional: Initialize tooltips if needed
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-
-        // Parcel tracking helper (17TRACK)
         function trackOn17() {
             var input = document.getElementById('tracking-input');
             if (!input) return;
@@ -527,47 +454,16 @@
                 input.focus();
                 return;
             }
-            var url = 'https://t.17track.net/th#nums=' + encodeURIComponent(code);
-            window.open(url, '_blank');
+            window.open('https://t.17track.net/th#nums=' + encodeURIComponent(code), '_blank');
         }
 
-        // Submit on Enter
         var trackInput = document.getElementById('tracking-input');
         if (trackInput) {
             trackInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    trackOn17();
-                }
+                if (e.key === 'Enter') trackOn17();
             });
         }
     </script>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4960Y1MC3"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-C4960Y1MC3');
-    </script>
-
-    <!-- Histats.com  START  (aync)-->
-    <script type="text/javascript">var _Hasync = _Hasync || [];
-        _Hasync.push(['Histats.start', '1,4974433,4,320,112,62,00001011']);
-        _Hasync.push(['Histats.fasi', '1']);
-        _Hasync.push(['Histats.track_hits', '']);
-        (function () {
-            var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
-            hs.src = ('//s10.histats.com/js15_as.js');
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
-        })();</script>
-    <noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4974433&101" alt=""
-                border="0"></a></noscript>
-    <!-- Histats.com  END  -->
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3448016067803073"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>

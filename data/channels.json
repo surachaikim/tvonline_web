@@ -1,0 +1,711 @@
+[
+  {
+    "channel_id": "ch3",
+    "name": "ช่อง 3 HD",
+    "description": "สถานีโทรทัศน์ไทยทีวีสีช่อง 3",
+    "logo": "/static/img/3hd.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://p1.cdn.vet/live/ch3/i/ch3i.m3u8?sid=b5yNTFjZjA3MTBhYzU0YjFlYzhlOQOTY1ZjRjNDg5ZjE0YjI1",
+        "status": "unverified",
+        "is_primary": true
+      },
+      {
+        "id": "official",
+        "label": "CH3Plus",
+        "type": "official",
+        "url": "https://ch3plus.com/live",
+        "status": "active"
+      },
+      {
+        "id": "trueid",
+        "label": "TrueID",
+        "type": "external",
+        "url": "https://tv.trueid.net/th-th/live/ch3-hd",
+        "status": "active"
+      }
+    ]
+  },
+  {
+    "channel_id": "ch5",
+    "name": "ช่อง 5 HD",
+    "description": "สถานีโทรทัศน์กองทัพบกช่อง 5",
+    "logo": "/static/img/channel5.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://639bc5877c5fe.streamlock.net/tv5hdlive/tv5hdlive/playlist.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      },
+      {
+        "id": "official",
+        "label": "ททบ.5",
+        "type": "official",
+        "url": "https://thaitv5hd.com/web/live.php",
+        "status": "active"
+      },
+      {
+        "id": "trueid",
+        "label": "TrueID",
+        "type": "external",
+        "url": "https://tv.trueid.net/th-th/live/ch5",
+        "status": "active"
+      }
+    ]
+  },
+  {
+    "channel_id": "ch7",
+    "name": "ช่อง 7 HD",
+    "description": "สถานีโทรทัศน์ช่อง 7 HD",
+    "logo": "/static/img/ch7-hd.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "http://edge2a.v2h-cdn.com/hd_7/7hd.stream/playlist.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      },
+      {
+        "id": "official",
+        "label": "ช่อง 7",
+        "type": "official",
+        "url": "https://www.ch7.com/live.html",
+        "status": "active"
+      },
+      {
+        "id": "trueid",
+        "label": "TrueID",
+        "type": "external",
+        "url": "https://tv.trueid.net/th-th/live/ch7-hd",
+        "status": "active"
+      }
+    ]
+  },
+  {
+    "channel_id": "mcot",
+    "name": "MCOT HD",
+    "description": "สถานีโทรทัศน์ MCOT HD",
+    "logo": "/static/img/mcot-hd.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://p1.cdn.vet/live/ch9/i/ch9i.m3u8?sid=b5yMzA2OTJkMDNjOTg0YmY2NmZhMwNzdlZGQ4NzAzOTg3ZGNh",
+        "status": "unverified",
+        "is_primary": true
+      },
+      {
+        "id": "official",
+        "label": "MCOT",
+        "type": "official",
+        "url": "https://tv.mcot.net/mcothd",
+        "status": "active"
+      }
+    ]
+  },
+  {
+    "channel_id": "thaipbs",
+    "name": "Thai PBS HD",
+    "description": "สถานีโทรทัศน์ไทยพีบีเอส",
+    "logo": "/static/img/thaipbs.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://edge2a.v2h-cdn.com/tpbs/tpbs.stream/playlist.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      },
+      {
+        "id": "official",
+        "label": "Thai PBS",
+        "type": "official",
+        "url": "https://www.thaipbs.or.th/live",
+        "status": "active"
+      },
+      {
+        "id": "trueid",
+        "label": "TrueID",
+        "type": "external",
+        "url": "https://tv.trueid.net/th-th/live/thaipbs",
+        "status": "active"
+      }
+    ]
+  },
+  {
+    "channel_id": "MamaHD",
+    "name": "Mama HD",
+    "description": "ช่องรายการสำหรับเด็กและครอบครัว Mama HD",
+    "logo": "/static/img/cartoon.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "http://stv.mediacdn.ru/live/cdn/mama/playlist.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      }
+    ]
+  },
+  {
+    "channel_id": "FWTOON",
+    "name": "FWTOON",
+    "description": "ช่องการ์ตูน FWTOON",
+    "logo": "/static/img/cartoon.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://freelive2.inwstream.com:1936/freelive-edge/fwtoon_fw-iptv.stream/chunks.m3u8?nimblesessionid=187607525&wmsAuthSign=c2VydmVyX3RpbWU9OS8yLzIwMjUgNzoxODo1OSBBTSZoYXNoX3ZhbHVlPTBHS25QK1RwVEMvZHpIN2U4YnJ0T2c9PSZ2YWxpZG1pbnV0ZXM9Mg==",
+        "status": "unverified",
+        "is_primary": true
+      }
+    ]
+  },
+  {
+    "channel_id": "4sport",
+    "name": "4 Sport",
+    "description": "ช่องกีฬา 4 Sport",
+    "logo": "/static/img/4sport.jpg",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://pepsi.abntv.live/hls/4spstream.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      }
+    ]
+  },
+  {
+    "channel_id": "manyok",
+    "name": "Manyok Channel",
+    "description": "ช่อง Manyok Channel",
+    "logo": "/static/img/MANYOK TV.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://playball.fun/hls/manyok.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      }
+    ]
+  },
+  {
+    "channel_id": "kids",
+    "name": "Kids Channel",
+    "description": "ช่องรายการสำหรับเด็ก Kids Channel",
+    "logo": "/static/img/kids logo.png",
+    "isLive": true,
+    "sources": [
+      {
+        "id": "tvhub",
+        "label": "TVHUB Player",
+        "type": "embed",
+        "url": "https://playball.fun/hls/kids.m3u8",
+        "status": "unverified",
+        "is_primary": true
+      }
+    ]
+  },
+  {
+    "channel_id": "nbt",
+    "name": "NBT2HD",
+    "description": "สถานีโทรทัศน์ NBT2HD",
+    "logo": "/static/img/nbt.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://nbt2hd.prd.go.th/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/nbt", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "thairath",
+    "name": "Thairath TV",
+    "description": "ไทยรัฐทีวี",
+    "logo": "/static/img/hd-thairath.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.thairath.co.th/tv/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/thairattv", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "pptv",
+    "name": "PPTV HD 36",
+    "description": "พีพีทีวี เอชดี ช่อง 36",
+    "logo": "/static/img/hd-pptv.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.pptvhd36.com/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/pptv-hd-36", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "mono29",
+    "name": "MONO29",
+    "description": "MONO29",
+    "logo": "/static/img/hd-mono.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://mono29.com/livetv", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/mono29", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "one31",
+    "name": "ONE 31",
+    "description": "ช่องวัน 31",
+    "logo": "/static/img/hd-gmmone.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.one31.net/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/one31", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "ch8",
+    "name": "ช่อง 8",
+    "description": "ช่อง 8",
+    "logo": "/static/img/hd-ch8.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.thaich8.com/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "gmm25",
+    "name": "GMM25",
+    "description": "GMM25",
+    "logo": "/static/img/sd-gmm.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/gmm25", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "amarin",
+    "name": "Amarin TV",
+    "description": "Amarin TV",
+    "logo": "/static/img/amarin.jpg",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.amarintv.com/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/amarintv-hd", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "nation",
+    "name": "Nation TV",
+    "description": "Nation TV",
+    "logo": "/static/img/nation.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.nationtv.tv/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "workpoint",
+    "name": "Workpoint TV",
+    "description": "Workpoint TV",
+    "logo": "/static/img/workpoint.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.workpointtv.com/live", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/workpointtv", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "true4u",
+    "name": "True4U",
+    "description": "True4U",
+    "logo": "/static/img/true4u.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://www.true4u.com/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "topnews",
+    "name": "Top News",
+    "description": "Top News",
+    "logo": "/static/img/top news.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/tid-top-news", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "news1",
+    "name": "News1",
+    "description": "News1",
+    "logo": "/static/img/news1.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/news-newss1", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "thaichaiyo",
+    "name": "ไทยไชโย",
+    "description": "ไทยไชโย",
+    "logo": "/static/img/tt.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://thaichaiyo.tv/", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/thaichaiyo", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "tsports",
+    "name": "T Sports",
+    "description": "T Sports",
+    "logo": "/static/img/tsports.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/t-sports-7-sd", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "cool",
+    "name": "Cool Channel",
+    "description": "Cool Channel",
+    "logo": "/static/img/Cool Channel.png",
+    "isLive": true,
+    "sources": [
+      {"id": "official", "label": "Official", "type": "official", "url": "https://cool-channel.com/", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/cool-ch", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "altv",
+    "name": "ALTV",
+    "description": "ALTV",
+    "logo": "/static/img/altv4-logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/altv", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "mixmajor",
+    "name": "Mix Major Channel",
+    "description": "Mix Major Channel",
+    "logo": "/static/img/mix.png",
+    "isLive": true,
+    "sources": [
+      {"id": "loox", "label": "LooX TV", "type": "external", "url": "https://looxtv.tv/Mix%20Major%20Channel", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "parliament",
+    "name": "Parliament",
+    "description": "Parliament TV",
+    "logo": "/static/img/Parliament.png",
+    "isLive": true,
+    "sources": [
+      {"id": "loox", "label": "LooX TV", "type": "external", "url": "https://looxtv.tv/Parliament", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "tnn",
+    "name": "TNN",
+    "description": "TNN 24",
+    "logo": "/static/img/TNN.png",
+    "isLive": true,
+    "sources": [
+      {"id": "loox", "label": "LooX TV", "type": "external", "url": "https://looxtv.tv/TNN%2024", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "jkn18",
+    "name": "JKN 18",
+    "description": "ช่องบันเทิงและวาไรตี้ JKN 18",
+    "logo": "/static/img/JKN18.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/jkn18", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "boomerang",
+    "name": "Boomerang",
+    "description": "ช่องการ์ตูน Boomerang",
+    "logo": "/static/img/Boomerang_tv_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/boomerang-hd", "status": "active"},
+      {"id": "youtube", "label": "YouTube", "type": "official", "url": "https://www.youtube.com/@BoomerangThailandchannel", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "cartoonclub",
+    "name": "Cartoon Club Channel",
+    "description": "ช่องการ์ตูนญี่ปุ่น Cartoon Club",
+    "logo": "/static/img/cartoon.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/tid-cartoon-club-channel", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "trueplookpanya",
+    "name": "True Plookpanya",
+    "description": "ช่องความรู้และการศึกษา True Plookpanya",
+    "logo": "/static/img/supten.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/trueplookpanya", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "whitechannel",
+    "name": "White Channel",
+    "description": "ช่องรายการศาสนาและสังคม White Channel",
+    "logo": "/static/img/white.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/white-channel-hd", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "tnn2",
+    "name": "TNN 2",
+    "description": "ช่อง TNN 2 สดตลอด 24 ชั่วโมง",
+    "logo": "/static/img/tnn24.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/tnn-2", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "golfchannel",
+    "name": "Golf Channel Thailand HD",
+    "description": "ช่องกอล์ฟ Golf Channel Thailand HD",
+    "logo": "/static/img/golf.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/golf-th-dvb", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "golfplus",
+    "name": "Golf Channel Thailand HD Plus",
+    "description": "ช่องกอล์ฟ Golf Channel Thailand HD Plus",
+    "logo": "/static/img/golfplus.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/golfplus-th-dvb", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "realitychannel",
+    "name": "Reality Channel",
+    "description": "ช่องรายการเรียลลิตี้และธรรมะ สามเณรปลูกปัญญาธรรม",
+    "logo": "/static/img/supten.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/realitychannel-hd", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "aniplus",
+    "name": "ANIPLUS Channel",
+    "description": "ช่องอนิเมะ ANIPLUS Channel",
+    "logo": "/static/img/cartoon.png",
+    "isLive": true,
+    "sources": [
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/aniplus-channel", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv1",
+    "name": "DLTV 1",
+    "description": "DLTV1 ประถมศึกษาปีที่ 1",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/01_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv01.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV1", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv2",
+    "name": "DLTV 2",
+    "description": "DLTV2 ประถมศึกษาปีที่ 2",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/02_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv02.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV2", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv3",
+    "name": "DLTV 3",
+    "description": "DLTV3 ประถมศึกษาปีที่ 3",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/03_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv03.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV3", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv4",
+    "name": "DLTV 4",
+    "description": "DLTV4 ประถมศึกษาปีที่ 4",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/04_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv04.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV4", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv5",
+    "name": "DLTV 5",
+    "description": "DLTV5 ประถมศึกษาปีที่ 5",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/05_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv05.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV5", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv6",
+    "name": "DLTV 6",
+    "description": "DLTV6 ประถมศึกษาปีที่ 6",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/06_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv06.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV6", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv7",
+    "name": "DLTV 7",
+    "description": "DLTV7 มัธยมศึกษาปีที่ 1",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/07_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv07.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV7", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv8",
+    "name": "DLTV 8",
+    "description": "DLTV8 มัธยมศึกษาปีที่ 2",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/08_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv08.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV8", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv9",
+    "name": "DLTV 9",
+    "description": "DLTV9 มัธยมศึกษาปีที่ 3",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/09_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv09.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV9", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv10",
+    "name": "DLTV 10",
+    "description": "DLTV10 อนุบาลศึกษาปีที่ 1",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/10_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv10.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV10", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv11",
+    "name": "DLTV 11",
+    "description": "DLTV11 อนุบาลศึกษาปีที่ 2",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/11_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv11.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV11", "status": "active"},
+      {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/dltv-11", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv12",
+    "name": "DLTV 12",
+    "description": "DLTV12 อนุบาลศึกษาปีที่ 3",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/12_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv12.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV12", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv13",
+    "name": "DLTV 13",
+    "description": "DLTV13 อาชีวศึกษา / มทร.",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/13_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv13.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV13", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv14",
+    "name": "DLTV 14",
+    "description": "DLTV14 อุดมศึกษา",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/14_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv14.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV14", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "dltv15",
+    "name": "DLTV 15",
+    "description": "DLTV15 พัฒนาครู",
+    "logo": "https://www.dltv.ac.th/upload/data/channels/15_channel_logo.png",
+    "isLive": true,
+    "sources": [
+      {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv15.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV15", "status": "active"}
+    ]
+  }
+]

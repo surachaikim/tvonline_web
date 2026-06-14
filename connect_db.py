@@ -1,161 +1,97 @@
+import logging
 import os
+
 import pymysql
-from datetime import datetime
 
-# HOST = "192.168.1.123"
-HOST = os.getenv('DB_HOST', '192.168.1.190')
-USER = os.getenv('DB_USER', 'kim')
-PASS = os.getenv('DB_PASS', 'P@ssw0rdKim')
+HOST = os.getenv('DB_HOST', '127.0.0.1')
+USER = os.getenv('DB_USER', '')
+PASS = os.getenv('DB_PASS', '')
 DATABASE = os.getenv('DB_NAME', 'tvhub')
+PORT = int(os.getenv('DB_PORT', '3306'))
 
 
+def _connect():
+    return pymysql.connect(
+        host=HOST,
+        port=PORT,
+        user=USER,
+        passwd=PASS,
+        db=DATABASE,
+        charset='utf8mb4',
+        connect_timeout=3,
+        read_timeout=5,
+        write_timeout=5,
+        cursorclass=pymysql.cursors.DictCursor,
+    )
 
 
 class db:
-
+    @staticmethod
     def sql_fetchall(sql):
-        try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql)
-                row = cur.fetchall()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-        return row
+        return db.sql_fetchall_params(sql, None)
 
+    @staticmethod
     def sql_fetchone(sql):
-        try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql)
-                row = cur.fetchone()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-        return row
+        return db.sql_fetchone_params(sql, None)
 
+    @staticmethod
     def sql_fetchone_params(sql, params):
         try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql, params)
-                row = cur.fetchone()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-        return row
+            with _connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql, params)
+                    return cur.fetchone()
+        except Exception:
+            logging.exception("Database fetchone failed")
+            return None
 
-    def sql_commit(sql, string):
-        try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql, (string))
-                conn.commit()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-
-    def sql_run_commit(sql):
-        try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql)
-                conn.commit()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-
+    @staticmethod
     def sql_fetchall_params(sql, params):
         try:
-            conn = pymysql.connect(host=HOST, user=USER, passwd=PASS,
-                                   db=DATABASE, cursorclass=pymysql.cursors.DictCursor)
-            with conn.cursor() as cur:
-                cur.execute(sql, params)
-                row = cur.fetchall()
-        except:
-            cur.close()
-            conn.close()
-        finally:
-            cur.close()
-            conn.close()
-        return row
+            with _connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql, params)
+                    return cur.fetchall()
+        except Exception:
+            logging.exception("Database fetchall failed")
+            return []
+
+    @staticmethod
+    def sql_commit(sql, params=None):
+        try:
+            with _connect() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql, params)
+                conn.commit()
+                return True
+        except Exception:
+            logging.exception("Database commit failed")
+            return False
+
+    @staticmethod
+    def sql_run_commit(sql):
+        return db.sql_commit(sql)
 
 
 class share:
-
+    @staticmethod
     def format_number(info, digit):
-        item = round(info, digit)
-        return item
+        return round(info, digit)
 
+    @staticmethod
     def format_cunumber(info, digit):
-        item = ""
-        if digit == 0:
-            item = str("{:,.0f}".format(info))
-        elif digit == 1:
-            item = str("{:,.1f}".format(info))
-        elif digit == 2:
-            item = str("{:,.2f}".format(info))
-        elif digit == 3:
-            item = str("{:,.3f}".format(info))
-        elif digit == 4:
-            item = str("{:,.4f}".format(info))
-        elif digit == 5:
-            item = str("{:,.5f}".format(info))
-        elif digit == 6:
-            item = str("{:,.6f}".format(info))
-        elif digit == 7:
-            item = str("{:,.7f}".format(info))
-        elif digit == 8:
-            item = str("{:,.8f}".format(info))
-        else:
-            item = str("{:,.2f}".format(info))
-        return item
+        if 0 <= digit <= 8:
+            return f"{info:,.{digit}f}"
+        return f"{info:,.2f}"
 
+    @staticmethod
     def format_date(info):
-        dd = info.strftime("%d")
-        mm = info.strftime("%m")
-        yy = info.strftime("%Y")
-        yyyy = int(yy)
-        item = str(dd) + "/" + str(mm) + "/" + str(yyyy)
-        return item
+        return info.strftime("%d/%m/%Y")
 
+    @staticmethod
     def format_datetime(info):
-        dd = info.strftime("%d")
-        mm = info.strftime("%m")
-        yy = info.strftime("%Y")
-        h = info.strftime("%H")
-        m = info.strftime("%M")
-        s = info.strftime("%S")
-        item = f'{yy}-{mm}-{dd} {h}:{m}:{s}'
-        return item
+        return info.strftime("%Y-%m-%d %H:%M:%S")
 
+    @staticmethod
     def convert_datetime(info):
-        dd = info.strftime("%d")
-        mm = info.strftime("%m")
-        yy = info.strftime("%Y")
-        h = info.strftime("%H")
-        m = info.strftime("%M")
-        s = info.strftime("%S")
-        item = f'{yy}-{mm}-{dd} {h}:{m}:{s}'
-        return item
+        return info.strftime("%Y-%m-%d %H:%M:%S")
