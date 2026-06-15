@@ -103,8 +103,8 @@
         "id": "tvhub",
         "label": "TVHUB Player",
         "type": "embed",
-        "url": "https://p1.cdn.vet/live/ch9/i/ch9i.m3u8?sid=b5yMzA2OTJkMDNjOTg0YmY2NmZhMwNzdlZGQ4NzAzOTg3ZGNh",
-        "status": "unverified",
+        "url": "https://mcothd-streaming-edge-cdn.mcot.net/tencentmcot/smil:tencentmcot.smil/playlist.m3u8",
+        "status": "active",
         "is_primary": true
       },
       {
@@ -127,8 +127,8 @@
         "id": "tvhub",
         "label": "TVHUB Player",
         "type": "embed",
-        "url": "https://edge2a.v2h-cdn.com/tpbs/tpbs.stream/playlist.m3u8",
-        "status": "unverified",
+        "url": "https://thaipbs-live.cdn.byteark.com/live/playlist.m3u8",
+        "status": "active",
         "is_primary": true
       },
       {
@@ -356,6 +356,7 @@
     "logo": "/static/img/top news.png",
     "isLive": true,
     "sources": [
+      {"id": "m3u8", "label": "Top News Player", "type": "embed", "url": "https://live.topnews.co.th/hls/topnews_a_720.m3u8", "status": "active", "is_primary": true},
       {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/tid-top-news", "status": "active"}
     ]
   },
@@ -366,6 +367,7 @@
     "logo": "/static/img/news1.png",
     "isLive": true,
     "sources": [
+      {"id": "m3u8", "label": "News1 Player", "type": "embed", "url": "http://news1.live14.com/stream/news1.m3u8", "status": "active", "is_primary": true},
       {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/news-newss1", "status": "active"}
     ]
   },
@@ -397,6 +399,7 @@
     "logo": "/static/img/Cool Channel.png",
     "isLive": true,
     "sources": [
+      {"id": "m3u8", "label": "Cool Channel Player", "type": "embed", "url": "https://live.cool-channel.com/cool/live-manifest.m3u8", "status": "active", "is_primary": true},
       {"id": "official", "label": "Official", "type": "official", "url": "https://cool-channel.com/", "status": "active"},
       {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-en/live/cool-ch", "status": "active"}
     ]
@@ -428,6 +431,7 @@
     "logo": "/static/img/Parliament.png",
     "isLive": true,
     "sources": [
+      {"id": "m3u8", "label": "Parliament Player", "type": "embed", "url": "https://tv-live.tpchannel.org/live/tv.m3u8", "status": "active", "is_primary": true},
       {"id": "loox", "label": "LooX TV", "type": "external", "url": "https://looxtv.tv/Parliament", "status": "active"}
     ]
   },
@@ -489,6 +493,7 @@
     "logo": "/static/img/white.png",
     "isLive": true,
     "sources": [
+      {"id": "m3u8", "label": "White Channel Player", "type": "embed", "url": "http://symc-cdn.violin.co.th:1935/tndedge/whitechannel/chunklist.m3u8", "status": "active", "is_primary": true},
       {"id": "trueid", "label": "TrueID", "type": "external", "url": "https://tv.trueid.net/th-th/live/white-channel-hd", "status": "active"}
     ]
   },
@@ -706,6 +711,138 @@
     "sources": [
       {"id": "dltv", "label": "DLTV Player", "type": "embed", "url": "https://cdn-live.dltv.ac.th/dltv15.m3u8", "status": "active", "is_primary": true},
       {"id": "official", "label": "DLTV", "type": "official", "url": "https://www.dltv.ac.th/streaming?ch=DLTV15", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-nhk-world",
+    "name": "NHK World Japan",
+    "description": "ช่องข่าวและสารคดีต่างประเทศจากญี่ปุ่น NHK World Japan",
+    "logo": "/static/img/nhk.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "NHK World Player", "type": "embed", "url": "https://masterpl.hls.nhkworld.jp/hls/w/live/smarttv.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "NHK World", "type": "official", "url": "https://www3.nhk.or.jp/nhkworld/en/live/", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-cna",
+    "name": "CNA",
+    "description": "ช่องข่าวต่างประเทศ CNA จากสิงคโปร์",
+    "logo": "/static/img/cna.jpg",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "CNA Player", "type": "embed", "url": "https://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "CNA", "type": "official", "url": "https://www.channelnewsasia.com/watch/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-bloomberg-tv",
+    "name": "Bloomberg TV Asia",
+    "description": "ช่องข่าวธุรกิจและการเงิน Bloomberg TV Asia",
+    "logo": "/static/img/bloombergtv.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "Bloomberg Player", "type": "embed", "url": "https://bloomberg.com/media-manifest/streams/asia.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "Bloomberg Live", "type": "official", "url": "https://www.bloomberg.com/live/asia", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-trt-world",
+    "name": "TRT World",
+    "description": "ช่องข่าวต่างประเทศ TRT World จากตุรกี",
+    "logo": "/static/img/white.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "TRT World Player", "type": "embed", "url": "https://tv-trtworld.medya.trt.com.tr/master.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "TRT World", "type": "official", "url": "https://www.trtworld.com/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-sabc-news",
+    "name": "SABC News",
+    "description": "ช่องข่าวต่างประเทศ SABC News จากแอฟริกาใต้",
+    "logo": "/static/img/white.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "SABC News Player", "type": "embed", "url": "https://sabconetanw.cdn.mangomolo.com/news/smil:news.stream.smil/master.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "SABC News", "type": "official", "url": "https://www.sabcnews.com/sabcnews/livestream/", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-india-today",
+    "name": "India Today",
+    "description": "ช่องข่าวต่างประเทศ India Today จากอินเดีย",
+    "logo": "/static/img/white.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "India Today Player", "type": "embed", "url": "https://indiatodaylive.akamaized.net/hls/live/2014320/indiatoday/indiatodaylive/playlist.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "India Today", "type": "official", "url": "https://www.indiatoday.in/livetv", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-tv5monde-info",
+    "name": "TV5Monde Info",
+    "description": "ช่องข่าวภาษาฝรั่งเศส TV5Monde Info",
+    "logo": "/static/img/white.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "TV5Monde Player", "type": "embed", "url": "https://ott.tv5monde.com/Content/HLS/Live/channel(info)/variant.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "TV5Monde", "type": "official", "url": "https://www.tv5monde.com/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-abc-news-australia",
+    "name": "ABC News Australia",
+    "description": "ช่องข่าวต่างประเทศ ABC News Australia",
+    "logo": "/static/img/abc.jpg",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "ABC News Player", "type": "embed", "url": "https://abc-news-dmd-streams-1.akamaized.net/out/v1/701126012d044971b3fa89406a440133/index.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "ABC Australia", "type": "official", "url": "https://iview.abc.net.au/category/watch-live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-ert-news",
+    "name": "ERT News",
+    "description": "ช่องข่าวต่างประเทศ ERT News จากกรีซ",
+    "logo": "/static/img/white.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "ERT News Player", "type": "embed", "url": "https://ert-ucdn.broadpeak-aas.com/bpk-tv/ERTNews/default/index.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "ERT News", "type": "official", "url": "https://www.ertnews.gr/", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-sky-news-arabia",
+    "name": "Sky News Arabia",
+    "description": "ช่องข่าวต่างประเทศ Sky News Arabia",
+    "logo": "/static/img/skynews.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "Sky News Arabia Player", "type": "embed", "url": "https://stream.skynewsarabia.com/hls/sna.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "Sky News Arabia", "type": "official", "url": "https://www.skynewsarabia.com/live", "status": "active"}
+    ]
+  },
+  {
+    "channel_id": "intl-bloomberg-originals",
+    "name": "Bloomberg Originals",
+    "description": "รายการสารคดีและคอนเทนต์ธุรกิจจาก Bloomberg Originals",
+    "logo": "/static/img/bloombergtv.png",
+    "category": "international",
+    "isLive": true,
+    "sources": [
+      {"id": "m3u8", "label": "Bloomberg Originals Player", "type": "embed", "url": "https://www.bloomberg.com/media-manifest/streams/originals-global.m3u8", "status": "active", "is_primary": true},
+      {"id": "official", "label": "Bloomberg Originals", "type": "official", "url": "https://www.bloomberg.com/originals", "status": "active"}
     ]
   }
 ]

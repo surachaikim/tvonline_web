@@ -10,6 +10,9 @@
     <style>
         :root {
             --brand-red: #b71c1c;
+            --surface: #1b1b1b;
+            --line: #2a2a2a;
+            --muted: #b0b0b0;
         }
 
         html,
@@ -26,7 +29,9 @@
         }
 
         .hero-section {
-            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            background:
+                radial-gradient(circle at 22% 20%, rgba(255, 255, 255, .12), transparent 18rem),
+                linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
             color: #fff;
             padding: 3rem 0;
             text-align: center;
@@ -41,6 +46,26 @@
             color: #ddd;
             border-radius: .75rem;
             padding: 1.25rem;
+        }
+
+        .insight-card {
+            background: #1b1b1b;
+            border: 1px solid #2a2a2a;
+            border-radius: .9rem;
+            padding: 1.25rem;
+        }
+
+        .lucky-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(183, 28, 28, .14);
+            border: 1px solid rgba(183, 28, 28, .35);
+            color: #ffd5d5;
+            font-weight: 700;
+            margin: 0 6px 8px 0;
         }
 
         .text-muted {
@@ -108,6 +133,7 @@
 
             <!-- Content: Tabs Mon-Sun -->
             <div id="content" class="d-none">
+                <div class="row g-3 mb-4" id="insight-row"></div>
                 <ul class="nav nav-pills justify-content-center mb-4" id="day-tab" role="tablist"></ul>
                 <div class="tab-content" id="day-tab-content"></div>
             </div>
@@ -131,23 +157,51 @@
 
             const tabsEl = document.getElementById('day-tab');
             const tabContentEl = document.getElementById('day-tab-content');
+            const insightEl = document.getElementById('insight-row');
             const indexToKey = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-            const dayKeyToday = indexToKey[now.getDay()]; // not auto-activating; only for display if needed later
+            const dayKeyToday = indexToKey[now.getDay()];
+
+            function escapeHtml(value) {
+                return String(value || '').replace(/[&<>"']/g, (char) => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[char]));
+            }
 
             function render(weekly) {
                 const daysOfWeek = { monday: 'วันจันทร์', tuesday: 'วันอังคาร', wednesday: 'วันพุธ', thursday: 'วันพฤหัสบดี', friday: 'วันศุกร์', saturday: 'วันเสาร์', sunday: 'วันอาทิตย์' };
                 const order = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
                 tabsEl.innerHTML = '';
                 tabContentEl.innerHTML = '';
+                insightEl.innerHTML = '';
+
+                const lucky = weekly.lucky || {};
+                insightEl.innerHTML = `
+                    <div class="col-lg-7">
+                        <div class="insight-card">
+                            <div class="text-muted small mb-1">ภาพรวมสัปดาห์นี้</div>
+                            <h4 class="fw-bold mb-2">จังหวะที่ควรรู้ก่อนเริ่มวัน</h4>
+                            <p class="mb-0">${escapeHtml(weekly.overview || 'สัปดาห์นี้เหมาะกับการตั้งหลัก วางแผน และเลือกใช้พลังกับเรื่องที่สำคัญจริง ๆ')}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="insight-card">
+                            <div class="text-muted small mb-2">เสริมดวง</div>
+                            <span class="lucky-chip"><i class="bi bi-palette-fill"></i>${escapeHtml(lucky.color || 'แดงเข้ม')}</span>
+                            <span class="lucky-chip"><i class="bi bi-123"></i>${escapeHtml(lucky.number || '8')}</span>
+                            <span class="lucky-chip"><i class="bi bi-stars"></i>${escapeHtml(lucky.keyword || 'ใจนิ่ง')}</span>
+                            <p class="mb-0 mt-2 small text-muted">${escapeHtml(weekly.advice || 'ทำทีละเรื่องให้จบ แล้วผลลัพธ์จะค่อย ๆ ชัดขึ้น')}</p>
+                        </div>
+                    </div>`;
+
                 order.forEach((key) => {
-                    const isActive = false; // user will choose manually
+                    const isActive = key === dayKeyToday;
                     const li = document.createElement('li');
                     li.className = 'nav-item';
                     li.innerHTML = `<button class="nav-link ${isActive ? 'active' : ''}" id="${key}-tab" data-bs-toggle="tab" data-bs-target="#${key}-content" type="button" role="tab" aria-controls="${key}-content" aria-selected="${isActive ? 'true' : 'false'}">${daysOfWeek[key]}</button>`;
                     tabsEl.appendChild(li);
 
                     const pane = document.createElement('div');
-                    pane.className = `tab-pane fade`;
+                    pane.className = `tab-pane fade ${isActive ? 'show active' : ''}`;
                     pane.id = `${key}-content`;
                     pane.role = 'tabpanel';
                     pane.setAttribute('aria-labelledby', `${key}-tab`);
@@ -161,7 +215,7 @@
                                             <i class="bi bi-briefcase-fill text-info fs-3 me-3"></i>
                                             <div>
                                                 <h5 class="text-white mb-2">การงาน</h5>
-                                                <p class="mb-0">${pred.work || '-'}</p>
+                                                <p class="mb-0">${escapeHtml(pred.work || '-')}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -172,7 +226,7 @@
                                             <i class="bi bi-cash-coin text-success fs-3 me-3"></i>
                                             <div>
                                                 <h5 class="text-white mb-2">การเงิน</h5>
-                                                <p class="mb-0">${pred.finance || '-'}</p>
+                                                <p class="mb-0">${escapeHtml(pred.finance || '-')}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -183,7 +237,7 @@
                                             <i class="bi bi-heart-fill text-brand fs-3 me-3"></i>
                                             <div>
                                                 <h5 class="text-white mb-2">ความรัก</h5>
-                                                <p class="mb-0">${pred.love || '-'}</p>
+                                                <p class="mb-0">${escapeHtml(pred.love || '-')}</p>
                                             </div>
                                         </div>
                                     </div>

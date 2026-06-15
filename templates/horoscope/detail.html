@@ -10,6 +10,9 @@
     <style>
         :root {
             --brand-red: #b71c1c;
+            --surface: #1b1b1b;
+            --line: #2a2a2a;
+            --muted: #b0b0b0;
         }
 
         html,
@@ -34,7 +37,9 @@
         }
 
         .horoscope-header {
-            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            background:
+                radial-gradient(circle at 20% 18%, rgba(255, 255, 255, .14), transparent 18rem),
+                linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
             color: #fff;
             padding: 2rem;
         }
@@ -69,6 +74,27 @@
             padding: 1.5rem;
             margin-bottom: 1rem;
             border-radius: 0.5rem;
+        }
+
+        .insight-card {
+            background: rgba(255, 255, 255, .045);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: .85rem;
+            padding: 1rem;
+            height: 100%;
+        }
+
+        .lucky-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(183, 28, 28, .14);
+            border: 1px solid rgba(183, 28, 28, .35);
+            color: #ffd5d5;
+            font-weight: 700;
+            margin: 0 6px 8px 0;
         }
 
         .prediction-card.work {
@@ -152,6 +178,8 @@
 
                     <!-- Content State -->
                     <div id="content-state" class="d-none">
+                        <div class="row g-3 mb-4" id="insight-row"></div>
+
                         <!-- Day Navigation Tabs -->
                         <ul class="nav nav-pills justify-content-center mb-4" id="day-tab" role="tablist"></ul>
 
@@ -188,11 +216,17 @@
             const errorEl = document.getElementById('error-state');
             const errorText = document.getElementById('error-text');
             const contentEl = document.getElementById('content-state');
+            const insightEl = document.getElementById('insight-row');
             const tabsEl = document.getElementById('day-tab');
             const tabContentEl = document.getElementById('day-tab-content');
 
             function show(el) { el.classList.remove('d-none'); }
             function hide(el) { el.classList.add('d-none'); }
+            function escapeHtml(value) {
+                return String(value || '').replace(/[&<>"']/g, (char) => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[char]));
+            }
 
             function createPredictionCard(cls, icon, title, text) {
                 const wrap = document.createElement('div');
@@ -212,6 +246,28 @@
             function render(data) {
                 tabsEl.innerHTML = '';
                 tabContentEl.innerHTML = '';
+                insightEl.innerHTML = '';
+
+                const lucky = data.lucky || {};
+                const overview = data.overview || 'สัปดาห์นี้ให้ใช้สติและความยืดหยุ่นเป็นพลังหลักของคุณ';
+                const advice = data.advice || 'เลือกทำสิ่งสำคัญก่อน แล้วปล่อยเรื่องเล็กให้เบาลง';
+                insightEl.innerHTML = `
+                    <div class="col-lg-7">
+                        <div class="insight-card">
+                            <div class="text-muted small mb-1">ภาพรวมสัปดาห์นี้</div>
+                            <h4 class="fw-bold mb-2">พลังของ{{ thai_sign }}</h4>
+                            <p class="mb-0">${escapeHtml(overview)}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="insight-card">
+                            <div class="text-muted small mb-2">ของมงคลประจำสัปดาห์</div>
+                            <span class="lucky-chip"><i class="bi bi-palette-fill"></i>${escapeHtml(lucky.color || 'แดงเข้ม')}</span>
+                            <span class="lucky-chip"><i class="bi bi-123"></i>${escapeHtml(lucky.number || '9')}</span>
+                            <span class="lucky-chip"><i class="bi bi-stars"></i>${escapeHtml(lucky.keyword || 'ตั้งหลัก')}</span>
+                            <p class="mb-0 mt-2 small text-muted">${escapeHtml(advice)}</p>
+                        </div>
+                    </div>`;
 
                 // Fixed order Monday → Sunday
                 const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];

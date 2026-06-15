@@ -3,6 +3,7 @@
     <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4 justify-content-center">
         {% set source_map = home_channel_sources() %}
         {% for channel in channel_list() %}
+        {% if channel.category|default('thai') != 'international' %}
         {% set channel_sources = source_map.get(channel.channel_id, []) %}
         <div class="col">
             <div class="card h-100 shadow-sm text-center">
@@ -38,6 +39,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endfor %}
     </div>
 </div>

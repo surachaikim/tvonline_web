@@ -3,20 +3,20 @@ import os
 
 import pymysql
 
-HOST = os.getenv('DB_HOST', '127.0.0.1')
-USER = os.getenv('DB_USER', '')
-PASS = os.getenv('DB_PASS', '')
-DATABASE = os.getenv('DB_NAME', 'tvhub')
-PORT = int(os.getenv('DB_PORT', '3306'))
-
 
 def _connect():
+    host = os.getenv('DB_HOST', '127.0.0.1')
+    user = os.getenv('DB_USER', '')
+    password = os.getenv('DB_PASS', '')
+    database = os.getenv('DB_NAME', 'tvhub')
+    port = int(os.getenv('DB_PORT', '3306'))
+
     return pymysql.connect(
-        host=HOST,
-        port=PORT,
-        user=USER,
-        passwd=PASS,
-        db=DATABASE,
+        host=host,
+        port=port,
+        user=user,
+        passwd=password,
+        db=database,
         charset='utf8mb4',
         connect_timeout=3,
         read_timeout=5,

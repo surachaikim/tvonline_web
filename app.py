@@ -6,23 +6,23 @@ from datetime import datetime
 from dotenv import load_dotenv
 from flask import (Flask, Response, abort, jsonify, render_template, request,
                    send_from_directory, url_for)
-import google.generativeai as genai
+import requests
+
+# --- Environment Configuration ---
+load_dotenv()
 
 from blueprints.admin import bp as admin_bp
 from blueprints.reviews import bp as reviews_bp
 from connect_db import db as dbutil
 
-# --- Gemini API Configuration ---
-load_dotenv()
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-if GEMINI_API_KEY:
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        logging.info("Gemini API configured successfully.")
-    except Exception as e:
-        logging.error("Failed to configure Gemini API: %s", e)
+# --- OpenRouter API Configuration ---
+OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
+OPENROUTER_MODEL = os.getenv('OPENROUTER_MODEL', 'google/gemma-4-31b-it:free')
+OPENROUTER_API_URL = os.getenv('OPENROUTER_API_URL', 'https://openrouter.ai/api/v1/chat/completions')
+if OPENROUTER_API_KEY:
+    logging.info("OpenRouter API configured successfully.")
 else:
-    logging.warning("GEMINI_API_KEY not found in environment variables. Horoscope feature will not work.")
+    logging.warning("OPENROUTER_API_KEY not found in environment variables. Horoscope feature will not work.")
 
 # --- App Setup ---
 app = Flask(__name__)
@@ -220,7 +220,7 @@ def ads_txt():
     """Serves the ads.txt file."""
     return send_from_directory(app.static_folder, 'ads.txt')
 
-# --- Horoscope Feature (Gemini Powered) ---
+# --- Horoscope Feature (OpenRouter Powered) ---
 ZODIAC_SIGNS = {
     'aries': 'ราศีเมษ', 'taurus': 'ราศีพฤษภ', 'gemini': 'ราศีเมถุน',
     'cancer': 'ราศีกรกฎ', 'leo': 'ราศีสิงห์', 'virgo': 'ราศีกันย์',
@@ -273,9 +273,149 @@ def calc_age(birthdate: datetime) -> int:
         years -= 1
     return years
 
-def get_gemini_horoscope(sign: str) -> dict:
+
+def _parse_ai_json(text: str):
+    cleaned = re.sub(r'^```json\s*|```\s*$', '', (text or '').strip(), flags=re.IGNORECASE | re.MULTILINE)
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        json_text = _extract_balanced_json_object(cleaned)
+        if json_text:
+            return json.loads(json_text)
+        raise
+
+
+def _extract_balanced_json_object(text: str) -> str | None:
+    start = text.find('{')
+    if start == -1:
+        return None
+
+    depth = 0
+    in_string = False
+    escape = False
+    for i, char in enumerate(text[start:], start=start):
+        if in_string:
+            if escape:
+                escape = False
+            elif char == '\\':
+                escape = True
+            elif char == '"':
+                in_string = False
+            continue
+
+        if char == '"':
+            in_string = True
+        elif char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
+
+
+def _extract_openrouter_text(payload: dict) -> str:
+    choices = payload.get('choices') or []
+    if not choices:
+        return ''
+
+    content = (choices[0].get('message') or {}).get('content')
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = []
+        for item in content:
+            if isinstance(item, dict) and item.get('type') == 'text':
+                parts.append(item.get('text') or '')
+            elif isinstance(item, str):
+                parts.append(item)
+        return '\n'.join(part for part in parts if part)
+    return ''
+
+
+def _openrouter_json(prompt: str, max_tokens: int = 3000) -> dict:
+    if not OPENROUTER_API_KEY:
+        msg = "OpenRouter API is not configured. Set OPENROUTER_API_KEY."
+        logging.error(msg)
+        return {"error": msg}
+
+    headers = {
+        'Authorization': f'Bearer {OPENROUTER_API_KEY}',
+        'Content-Type': 'application/json',
+        'HTTP-Referer': BASE_URL,
+        'X-Title': SITE_NAME,
+    }
+    payload = {
+        'model': OPENROUTER_MODEL,
+        'messages': [
+            {
+                'role': 'system',
+                'content': 'You are a Thai horoscope writer. Return one complete valid minified JSON object only. Do not include markdown.',
+            },
+            {'role': 'user', 'content': prompt + '\n\nข้อบังคับ: ตอบเป็น JSON เท่านั้น ห้ามใช้ markdown และให้แต่ละข้อความสั้นกระชับเพื่อไม่ให้ JSON ถูกตัดกลางทาง'},
+        ],
+        'temperature': 0.3,
+        'max_tokens': max_tokens,
+        'response_format': {'type': 'json_object'},
+    }
+
+    try:
+        response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload, timeout=35)
+        if response.status_code == 400:
+            fallback_payload = dict(payload)
+            fallback_payload.pop('response_format', None)
+            response = requests.post(OPENROUTER_API_URL, headers=headers, json=fallback_payload, timeout=35)
+        response.raise_for_status()
+
+        response_payload = response.json()
+        choices = response_payload.get('choices') or []
+        finish_reason = choices[0].get('finish_reason') if choices else None
+        if finish_reason == 'length':
+            logging.warning("OpenRouter response was truncated; retrying with a larger token budget.")
+            retry_payload = dict(payload)
+            retry_payload['max_tokens'] = max(max_tokens, 3500)
+            retry_payload['temperature'] = 0.1
+            retry_payload['messages'] = [
+                {
+                    'role': 'system',
+                    'content': 'Return one complete minified JSON object only. No markdown, no explanations.',
+                },
+                {'role': 'user', 'content': prompt + '\n\nตอบใหม่แบบสั้นมาก ทุก value ไม่เกิน 90 ตัวอักษร และต้องปิดวงเล็บ JSON ให้ครบ'},
+            ]
+            retry_response = requests.post(OPENROUTER_API_URL, headers=headers, json=retry_payload, timeout=45)
+            if retry_response.status_code == 400:
+                retry_payload.pop('response_format', None)
+                retry_response = requests.post(OPENROUTER_API_URL, headers=headers, json=retry_payload, timeout=45)
+            retry_response.raise_for_status()
+            response_payload = retry_response.json()
+
+        text = _extract_openrouter_text(response_payload)
+        if not text:
+            logging.error("Empty response from OpenRouter.")
+            return {"error": "AI returned empty response."}
+
+        return _parse_ai_json(text)
+    except json.JSONDecodeError:
+        logging.error("OpenRouter response was not valid JSON.")
+        return {"error": "Invalid response format from AI."}
+    except requests.HTTPError as e:
+        status_code = e.response.status_code if e.response is not None else None
+        if status_code == 429:
+            logging.error("OpenRouter rate limit or quota exceeded.")
+            return {"error": "OpenRouter ใช้งานเกินโควต้า/ถูกจำกัดชั่วคราว กรุณารอสักครู่แล้วลองใหม่"}
+        if status_code in (401, 403):
+            logging.error("OpenRouter authentication failed.")
+            return {"error": "ยืนยันตัวตน OpenRouter ไม่สำเร็จ กรุณาตรวจสอบ OPENROUTER_API_KEY"}
+        logging.error("Error calling OpenRouter API: %s", e)
+        return {"error": "Could not retrieve horoscope data."}
+    except requests.RequestException as e:
+        logging.error("Error calling OpenRouter API: %s", e)
+        return {"error": "Could not retrieve horoscope data."}
+
+
+def get_openrouter_horoscope(sign: str) -> dict:
     """
-    Generates a 7-day horoscope forecast using the Gemini API and caches it daily.
+    Generates a 7-day horoscope forecast using OpenRouter and caches it daily.
     """
     today_str = datetime.now().strftime('%Y-%m-%d')
     cache_key = f"horoscope_{sign}_{today_str}"
@@ -284,12 +424,7 @@ def get_gemini_horoscope(sign: str) -> dict:
         logging.info(f"CACHE HIT for {cache_key}")
         return _api_cache[cache_key]
 
-    logging.info(f"CACHE MISS for {cache_key}. Calling Gemini API.")
-
-    if not GEMINI_API_KEY:
-        msg = "Gemini API is not configured. Set GEMINI_API_KEY."
-        logging.error(msg)
-        return {"error": msg}
+    logging.info(f"CACHE MISS for {cache_key}. Calling OpenRouter API.")
 
     try:
         thai_sign = ZODIAC_SIGNS.get(sign, sign)
@@ -297,84 +432,40 @@ def get_gemini_horoscope(sign: str) -> dict:
         prompt = (
             "จงทำนายดวงชะตา 7 วัน (จันทร์-อาทิตย์) สำหรับราศี '"
             + str(thai_sign)
-            + "' โดยตอบเป็น JSON object เท่านั้น ตามโครงสร้างที่กำหนด และห้ามใส่คำอธิบายอื่นๆ นอก JSON:\n"
+            + "' โดยตอบเป็น JSON object เท่านั้น ตามโครงสร้างที่กำหนด และห้ามใส่คำอธิบายอื่นๆ นอก JSON "
+            + "ให้ข้อความสั้น กระชับ น่าอ่าน มีสรุปภาพรวม สีมงคล เลขนำโชค และคำแนะนำท้ายสัปดาห์:\n"
             + "{\n"
+            + "  \"overview\": \"...\",\n"
+            + "  \"lucky\": {\"color\": \"...\", \"number\": \"...\", \"keyword\": \"...\"},\n"
             + "  \"monday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"tuesday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"wednesday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"thursday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"friday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"saturday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
-            + "  \"sunday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"}\n"
+            + "  \"sunday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
+            + "  \"advice\": \"...\"\n"
             + "}"
         )
 
-        # Prefer a current model and ask for JSON; fall back if unsupported
-        model = None
-        try:
-            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={
-                'response_mime_type': 'application/json'
-            })
-        except Exception:
-            try:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-            except Exception:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-
-        response = model.generate_content(prompt)
-
-        # Safely extract text content
-        resp_text = None
-        try:
-            resp_text = response.text if hasattr(response, 'text') else None
-        except Exception:
-            resp_text = None
-
-        if not resp_text:
-            # Try assembling from candidates/parts
-            try:
-                parts = []
-                for c in getattr(response, 'candidates', []) or []:
-                    for p in getattr(c, 'content', {}).parts or []:
-                        if hasattr(p, 'text') and p.text:
-                            parts.append(p.text)
-                resp_text = "\n".join(parts) if parts else None
-            except Exception:
-                resp_text = None
-
-        if not resp_text:
-            logging.error(f"Empty response from Gemini for sign '{sign}'. Raw: {response}")
-            return {"error": "AI returned empty response."}
-
-        cleaned_text = re.sub(r'^```json\s*|```\s*$', '', resp_text.strip(), flags=re.IGNORECASE|re.MULTILINE)
-        # As a fallback, try to extract the first JSON object in the text
-        try:
-            data = json.loads(cleaned_text)
-        except json.JSONDecodeError:
-            match = re.search(r'\{[\s\S]*\}', cleaned_text)
-            if match:
-                data = json.loads(match.group(0))
-            else:
-                logging.error(f"Gemini response not valid JSON for '{sign}'. Text: {cleaned_text[:500]}")
-                return {"error": "Invalid response format from AI."}
+        data = _openrouter_json(prompt)
+        if 'error' in data:
+            return data
 
         _api_cache[cache_key] = data
         return data
 
     except Exception as e:
-        logging.error(f"Error calling Gemini API for sign '{sign}': {e}")
+        logging.error(f"Error generating horoscope for sign '{sign}': {e}")
         return {"error": "Could not retrieve horoscope data."}
 
 
-def get_gemini_daily() -> dict:
+def get_openrouter_daily() -> dict:
     """Generates today's general daily horoscope (no zodiac) and caches by date."""
     today_str = datetime.now().strftime('%Y-%m-%d')
     cache_key = f"horoscope_daily_{today_str}"
     if cache_key in _api_cache:
         return _api_cache[cache_key]
-
-    if not GEMINI_API_KEY:
-        return {"error": "Gemini API is not configured. Set GEMINI_API_KEY."}
 
     try:
         prompt = (
@@ -386,131 +477,60 @@ def get_gemini_daily() -> dict:
             + "}"
         )
 
-        # Prefer 1.5 with JSON; fallback as needed
-        try:
-            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={'response_mime_type': 'application/json'})
-        except Exception:
-            try:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-            except Exception:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-
-        response = model.generate_content(prompt)
-
-        text = None
-        try:
-            text = response.text if hasattr(response, 'text') else None
-        except Exception:
-            text = None
-        if not text:
-            # fallback assemble
-            try:
-                parts = []
-                for c in getattr(response, 'candidates', []) or []:
-                    for p in getattr(c, 'content', {}).parts or []:
-                        if hasattr(p, 'text') and p.text:
-                            parts.append(p.text)
-                text = "\n".join(parts) if parts else None
-            except Exception:
-                text = None
-        if not text:
-            return {"error": "AI returned empty response."}
-
-        cleaned = re.sub(r'^```json\s*|```\s*$', '', text.strip(), flags=re.IGNORECASE|re.MULTILINE)
-        try:
-            data = json.loads(cleaned)
-        except json.JSONDecodeError:
-            m = re.search(r'\{[\s\S]*\}', cleaned)
-            if not m:
-                return {"error": "Invalid response format from AI."}
-            data = json.loads(m.group(0))
+        data = _openrouter_json(prompt)
+        if 'error' in data:
+            return data
 
         _api_cache[cache_key] = data
         return data
     except Exception as e:
-        logging.error(f"Error calling Gemini API for daily horoscope: {e}")
+        logging.error(f"Error generating daily horoscope: {e}")
         return {"error": "Could not retrieve daily horoscope."}
 
 
-def get_gemini_weekly_general() -> dict:
+def get_openrouter_weekly_general() -> dict:
     """Generates a general weekly (Mon-Sun) horoscope without zodiac and caches by date."""
     today_str = datetime.now().strftime('%Y-%m-%d')
     cache_key = f"horoscope_weekly_general_{today_str}"
     if cache_key in _api_cache:
         return _api_cache[cache_key]
 
-    if not GEMINI_API_KEY:
-        return {"error": "Gemini API is not configured. Set GEMINI_API_KEY."}
-
     try:
         prompt = (
             "จงทำนายดวงชะตารายสัปดาห์ 7 วัน (จันทร์-อาทิตย์) แบบทั่วไป (ไม่ระบุราศี) เป็นภาษาไทย "
-            "ให้เนื้อหาในแต่ละหัวข้อ 'การงาน', 'การเงิน', 'ความรัก' มีความละเอียดและน่าเชื่อถือ (อย่างน้อย 2-3 ประโยคต่อหัวข้อ) "
-            "ใช้ภาษาธรรมชาติ ระบุบริบท สถานการณ์ หรือคำแนะนำที่ปฏิบัติได้จริง และหลีกเลี่ยงความกำกวมเกินจำเป็น "
+            "ให้เนื้อหาในแต่ละหัวข้อ 'การงาน', 'การเงิน', 'ความรัก' เป็นคำทำนายสั้น กระชับ และมีคำแนะนำที่ปฏิบัติได้จริง "
+            "เพิ่มสรุปภาพรวม สีมงคล เลขนำโชค และคำแนะนำประจำสัปดาห์ "
             "ตอบเป็น JSON เท่านั้นและห้ามมีข้อความอื่นนอก JSON ตามโครงสร้างนี้:\n"
             + "{\n"
+            + "  \"overview\": \"...\",\n"
+            + "  \"lucky\": {\"color\": \"...\", \"number\": \"...\", \"keyword\": \"...\"},\n"
             + "  \"monday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"tuesday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"wednesday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"thursday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"friday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
             + "  \"saturday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
-            + "  \"sunday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"}\n"
+            + "  \"sunday\": {\"work\": \"...\", \"finance\": \"...\", \"love\": \"...\"},\n"
+            + "  \"advice\": \"...\"\n"
             + "}"
         )
 
-        try:
-            model = genai.GenerativeModel(model_name='gemini-2.5-flash', generation_config={'response_mime_type': 'application/json'})
-        except Exception:
-            try:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-            except Exception:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-
-        response = model.generate_content(prompt)
-
-        text = None
-        try:
-            text = response.text if hasattr(response, 'text') else None
-        except Exception:
-            text = None
-        if not text:
-            try:
-                parts = []
-                for c in getattr(response, 'candidates', []) or []:
-                    for p in getattr(c, 'content', {}).parts or []:
-                        if hasattr(p, 'text') and p.text:
-                            parts.append(p.text)
-                text = "\n".join(parts) if parts else None
-            except Exception:
-                text = None
-        if not text:
-            return {"error": "AI returned empty response."}
-
-        cleaned = re.sub(r'^```json\s*|```\s*$', '', text.strip(), flags=re.IGNORECASE|re.MULTILINE)
-        try:
-            data = json.loads(cleaned)
-        except json.JSONDecodeError:
-            m = re.search(r'\{[\s\S]*\}', cleaned)
-            if not m:
-                return {"error": "Invalid response format from AI."}
-            data = json.loads(m.group(0))
+        data = _openrouter_json(prompt)
+        if 'error' in data:
+            return data
 
         _api_cache[cache_key] = data
         return data
     except Exception as e:
-        logging.error(f"Error calling Gemini API for weekly general horoscope: {e}")
+        logging.error(f"Error generating weekly general horoscope: {e}")
         return {"error": "Could not retrieve weekly horoscope."}
 
-def get_gemini_birthdate(birthdate_str: str) -> dict:
+def get_openrouter_birthdate(birthdate_str: str) -> dict:
     """Generates a personalized horoscope based on birth date (YYYY-MM-DD). Cached per birthdate per day."""
     today_str = datetime.now().strftime('%Y-%m-%d')
     cache_key = f"horoscope_birth_{birthdate_str}_{today_str}"
     if cache_key in _api_cache:
         return _api_cache[cache_key]
-
-    if not GEMINI_API_KEY:
-        return {"error": "Gemini API is not configured. Set GEMINI_API_KEY."}
 
     # Parse and compute metadata
     try:
@@ -539,7 +559,7 @@ def get_gemini_birthdate(birthdate_str: str) -> dict:
             f"ราศีตะวันตก: {ZODIAC_SIGNS.get(western_sign, western_sign)}\\n"
             f"นักษัตรจีน: {chinese_th}\\n"
             f"อายุโดยประมาณ: {age_years} ปี\\n\n"
-            "ให้วิเคราะห์อย่างกระชับแต่มีสาระ น่าเชื่อถือ และมีคำแนะนำที่ปฏิบัติได้จริง โดยมีโครงสร้าง JSON ดังนี้:\n"
+            "ให้วิเคราะห์แบบสั้น กระชับ แต่มีสาระและมีคำแนะนำที่ปฏิบัติได้จริง โดยมีโครงสร้าง JSON ดังนี้:\n"
             "{\n"
             "  \"meta\": {\n"
             "    \"birthdate\": \"YYYY-MM-DD\", \"weekday_th\": \"...\", \"western_zodiac\": \"...\", \"thai_zodiac\": \"...\", \"age\": 0\n"
@@ -555,42 +575,9 @@ def get_gemini_birthdate(birthdate_str: str) -> dict:
             "}"
         )
 
-        try:
-            model = genai.GenerativeModel(model_name='gemini-1.5-pro', generation_config={'response_mime_type': 'application/json'})
-        except Exception:
-            try:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-            except Exception:
-                model = genai.GenerativeModel('gemini-2.5-flash')
-
-        response = model.generate_content(prompt)
-
-        text = None
-        try:
-            text = response.text if hasattr(response, 'text') else None
-        except Exception:
-            text = None
-        if not text:
-            try:
-                parts = []
-                for c in getattr(response, 'candidates', []) or []:
-                    for p in getattr(c, 'content', {}).parts or []:
-                        if hasattr(p, 'text') and p.text:
-                            parts.append(p.text)
-                text = "\n".join(parts) if parts else None
-            except Exception:
-                text = None
-        if not text:
-            return {"error": "AI returned empty response."}
-
-        cleaned = re.sub(r'^```json\s*|```\s*$', '', text.strip(), flags=re.IGNORECASE|re.MULTILINE)
-        try:
-            data = json.loads(cleaned)
-        except json.JSONDecodeError:
-            m = re.search(r'\{[\s\S]*\}', cleaned)
-            if not m:
-                return {"error": "Invalid response format from AI."}
-            data = json.loads(m.group(0))
+        data = _openrouter_json(prompt)
+        if 'error' in data:
+            return data
 
         # Enrich/ensure meta fields
         meta = data.get('meta', {}) if isinstance(data, dict) else {}
@@ -605,7 +592,7 @@ def get_gemini_birthdate(birthdate_str: str) -> dict:
         _api_cache[cache_key] = data
         return data
     except Exception as e:
-        logging.error(f"Error calling Gemini API for birth horoscope: {e}")
+        logging.error(f"Error generating birth horoscope: {e}")
         return {"error": "Could not retrieve birthdate horoscope."}
 
 
@@ -656,14 +643,14 @@ def horoscope_detail(sign: str):
 
 @app.get('/api/horoscope/daily')
 def api_horoscope_daily():
-    data = get_gemini_daily()
+    data = get_openrouter_daily()
     status = 200 if 'error' not in data else 500
     return data, status
 
 
 @app.get('/api/horoscope/weekly')
 def api_horoscope_weekly():
-    data = get_gemini_weekly_general()
+    data = get_openrouter_weekly_general()
     status = 200 if 'error' not in data else 500
     return data, status
 
@@ -678,7 +665,7 @@ def api_horoscope(sign: str):
     """Returns horoscope JSON for a given sign."""
     if sign not in ZODIAC_SIGNS:
         return {"error": "invalid sign"}, 404
-    data = get_gemini_horoscope(sign)
+    data = get_openrouter_horoscope(sign)
     status = 200 if 'error' not in data else 500
     return data, status
 
@@ -701,7 +688,7 @@ def api_horoscope_birth():
             birthdate_iso = _normalize_birthdate_input(birthdate_raw)
         except Exception as e:
             return {"error": str(e) or "รูปแบบวันเกิดไม่ถูกต้อง"}, 400
-        data = get_gemini_birthdate(birthdate_iso)
+        data = get_openrouter_birthdate(birthdate_iso)
         status = 200 if 'error' not in data else 400
         return data, status
     except Exception as e:

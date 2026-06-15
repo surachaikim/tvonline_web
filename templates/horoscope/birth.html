@@ -10,6 +10,9 @@
     <style>
         :root {
             --brand-red: #b71c1c;
+            --surface: #1b1b1b;
+            --line: #2a2a2a;
+            --muted: #b0b0b0;
         }
 
         html,
@@ -26,7 +29,9 @@
         }
 
         .hero-section {
-            background: linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, .13), transparent 18rem),
+                linear-gradient(135deg, #000 55%, var(--brand-red) 100%);
             color: #fff;
             padding: 3rem 0;
             text-align: center;
@@ -44,8 +49,8 @@
         }
 
         .card-dark {
-            background: #1b1b1b;
-            border: 1px solid #2a2a2a;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015)), var(--surface);
+            border: 1px solid var(--line);
             color: #ddd;
         }
 
@@ -65,6 +70,29 @@
             border-radius: .75rem;
             padding: 1.25rem;
         }
+
+        .quick-date {
+            border: 1px solid rgba(255, 255, 255, .14);
+            background: rgba(255, 255, 255, .04);
+            color: #fff;
+            border-radius: 999px;
+            padding: 7px 11px;
+            font-size: .9rem;
+        }
+
+        .quick-date:hover {
+            border-color: rgba(183, 28, 28, .55);
+            color: #fff;
+            background: rgba(183, 28, 28, .18);
+        }
+
+        .meta-pill {
+            background: rgba(183, 28, 28, .13);
+            border: 1px solid rgba(183, 28, 28, .3);
+            border-radius: 12px;
+            padding: 10px 12px;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -75,7 +103,7 @@
         <div class="hero-section mb-4">
             <div class="container">
                 <h1 class="fw-bold">ดูดวงตามวันเดือนปีเกิด</h1>
-                <p class="text-white-50 mb-0">กรอกวันเกิดของคุณเพื่อรับคำทำนายเฉพาะบุคคล</p>
+                <p class="text-white-50 mb-0">อ่านแนวโน้มเฉพาะตัวจากวันเกิด ราศี อายุ และนักษัตร พร้อมเลขนำโชค</p>
             </div>
         </div>
 
@@ -90,6 +118,10 @@
                                     placeholder="ตัวอย่าง: 24/08/2535" class="form-control" id="birthdate" required />
                                 <div class="form-text text-muted">รองรับทั้ง พ.ศ. (เช่น 24/08/2535) และ ค.ศ. (เช่น
                                     1992-08-24)</div>
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    <button type="button" class="quick-date" data-date="01/01/2533">ตัวอย่าง 01/01/2533</button>
+                                    <button type="button" class="quick-date" data-date="24/08/2535">ตัวอย่าง 24/08/2535</button>
+                                </div>
                             </div>
                             <div class="col-12 col-md-6 align-self-end">
                                 <button type="submit" class="btn btn-danger w-100"><i class="bi bi-magic"></i>
@@ -114,13 +146,19 @@
                             <div class="col-12">
                                 <div class="card card-dark p-3">
                                     <div class="row g-3">
-                                        <div class="col-md-3"><strong>วันเกิด:</strong> <span
-                                                id="meta-birthdate">-</span></div>
-                                        <div class="col-md-3"><strong>วันในสัปดาห์:</strong> <span
-                                                id="meta-weekday">-</span></div>
-                                        <div class="col-md-3"><strong>ราศี:</strong> <span id="meta-western">-</span>
+                                        <div class="col-md-3">
+                                            <div class="meta-pill"><strong>วันเกิด</strong><br><span
+                                                    id="meta-birthdate">-</span></div>
                                         </div>
-                                        <div class="col-md-3"><strong>นักษัตร:</strong> <span id="meta-thai">-</span>
+                                        <div class="col-md-3">
+                                            <div class="meta-pill"><strong>วันในสัปดาห์</strong><br><span
+                                                    id="meta-weekday">-</span></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="meta-pill"><strong>ราศี</strong><br><span id="meta-western">-</span></div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="meta-pill"><strong>นักษัตร</strong><br><span id="meta-thai">-</span></div>
                                         </div>
                                     </div>
                                     <div class="mt-2 small text-muted">อายุโดยประมาณ: <span id="meta-age">-</span> ปี
@@ -217,6 +255,13 @@
 
             function show(el) { el.classList.remove('d-none'); }
             function hide(el) { el.classList.add('d-none'); }
+
+            document.querySelectorAll('.quick-date').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    birthdateInput.value = btn.dataset.date || '';
+                    birthdateInput.focus();
+                });
+            });
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
