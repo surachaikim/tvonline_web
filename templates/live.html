@@ -4,18 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ name }} | ดูสดออนไลน์ | TVHUB</title>
-    <meta name="description" content="ดู {{ name }} ถ่ายทอดสดออนไลน์ - {{ description }}">
+    <title>{{ seo_title }}</title>
+    <meta name="description" content="{{ seo_description }}">
+    <meta name="keywords" content="{{ seo_keywords }}">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ canonical_url or request.base_url }}">
+    <link rel="alternate" href="{{ canonical_url or request.base_url }}" hreflang="th">
 
     <meta property="og:type" content="video.other">
     <meta property="og:site_name" content="{{ site_name }}">
-    <meta property="og:title" content="{{ name }} | ดูสดออนไลน์">
-    <meta property="og:description" content="ดู {{ name }} ถ่ายทอดสดออนไลน์ - {{ description }}">
+    <meta property="og:title" content="{{ seo_title }}">
+    <meta property="og:description" content="{{ seo_description }}">
     <meta property="og:url" content="{{ canonical_url or request.base_url }}">
-    <meta property="og:image"
-        content="{{ url_for('static', filename=(logo|replace('/static/','')) , _external=True) if logo else url_for('static', filename='img/tvhublogo.png', _external=True) }}">
+    <meta property="og:image" content="{{ logo_url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo_title }}">
+    <meta name="twitter:description" content="{{ seo_description }}">
+    <meta name="twitter:image" content="{{ logo_url }}">
 
     <link rel="icon" href="/static/img/tvhublogo.png" type="image/png">
     <link rel="apple-touch-icon" href="/static/img/tvhublogo.png">
@@ -31,13 +36,33 @@
             "@context": "https://schema.org",
             "@type": "VideoObject",
             "name": "{{ name }}",
-            "description": "{{ description }}",
-            "thumbnailUrl": ["{{ url_for('static', filename=(logo|replace('/static/','')), _external=True) if logo else url_for('static', filename='img/tvhublogo.png', _external=True) }}"],
+            "description": {{ seo_description|tojson }},
+            "thumbnailUrl": ["{{ logo_url }}"],
             "embedUrl": "{{ canonical_url or request.base_url }}",
             "publisher": {
                 "@type": "Organization",
                 "name": "{{ site_name }}"
             }
+        }
+    </script>
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "หน้าแรก",
+                    "item": "{{ base_url }}/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": {{ name|tojson }},
+                    "item": "{{ canonical_url or request.base_url }}"
+                }
+            ]
         }
     </script>
 
@@ -193,6 +218,48 @@
             padding-top: 14px;
         }
 
+        .seo-section {
+            margin-top: 26px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .03));
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 22px;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .related-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255, 255, 255, .04);
+        }
+
+        .related-card:hover {
+            color: #fff;
+            background: rgba(229, 9, 20, .16);
+            border-color: rgba(229, 9, 20, .45);
+        }
+
+        .related-card img {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+            padding: 5px;
+        }
+
         footer {
             border-top: 1px solid var(--line);
             background: #06070a;
@@ -268,6 +335,20 @@
                             </div>
                         </div>
                     </section>
+
+                    <section class="seo-section">
+                        <h2 class="h4 fw-bold mb-2">ดู {{ name }} สดออนไลน์</h2>
+                        <p class="muted mb-3">{{ seo_intro }}</p>
+                        <h3 class="h5 fw-bold mb-2">ช่องทีวีที่น่าสนใจ</h3>
+                        <div class="related-grid">
+                            {% for channel in related_channels %}
+                            <a class="related-card" href="{{ url_for('live', channel=channel.channel_id) }}">
+                                <img src="{{ channel.logo }}" alt="{{ channel.name }}">
+                                <span>{{ channel.name }}</span>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </section>
                 </div>
 
                 <div class="col-lg-4">
@@ -319,6 +400,7 @@
             </div>
         </div>
     </footer>
+    {% include 'includes/side_ads.html' %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>

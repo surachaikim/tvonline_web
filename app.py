@@ -101,6 +101,52 @@ def build_home_source_links():
     return source_links
 
 
+def absolute_logo_url(logo):
+    if not logo:
+        return f"{BASE_URL}{url_for('static', filename='img/tvhublogo.png')}"
+    if logo.startswith(('http://', 'https://')):
+        return logo
+    filename = logo.replace('/static/', '', 1).lstrip('/')
+    return f"{BASE_URL}{url_for('static', filename=filename)}"
+
+
+def build_live_seo(channel_data):
+    name = channel_data.get('name', 'ทีวีออนไลน์')
+    description = channel_data.get('description') or name
+    has_embed = bool(get_embed_sources(channel_data))
+    watch_mode = 'ดูในเว็บได้ทันที' if has_embed else 'เลือกช่องทางรับชมจากแหล่งทางการและพาร์ทเนอร์'
+    seo_title = f"ดู {name} สด ออนไลน์ HD | TVHUB"
+    seo_description = (
+        f"ดู {name} สดออนไลน์ อัปเดตช่องทางรับชม {watch_mode} "
+        f"รวมลิงก์ถ่ายทอดสดของ {description} ใช้งานง่ายบนมือถือและคอมพิวเตอร์"
+    )
+    seo_intro = (
+        f"หน้านี้รวมช่องทางสำหรับดู {name} สดออนไลน์บน TVHUB "
+        f"ผู้ชมสามารถเลือกได้ทั้ง Player ในเว็บ ลิงก์ทางการ หรือแพลตฟอร์มภายนอกตามที่ช่องมีให้บริการ "
+        f"เหมาะสำหรับคนที่ต้องการค้นหา {name} สด แบบเข้าใช้งานง่าย ไม่ต้องไล่หาลิงก์หลายที่ "
+        f"ข้อมูลช่องและแหล่งรับชมถูกจัดไว้ในหน้าเดียว พร้อมปุ่มเลือกแหล่งรับชมที่ชัดเจน "
+        f"หาก Player ในเว็บไม่พร้อมใช้งาน สามารถกดไปยังช่องทาง Official หรือ External ด้านข้างเพื่อรับชมต่อได้ทันที"
+    )
+    return {
+        'seo_title': seo_title,
+        'seo_description': seo_description,
+        'seo_intro': seo_intro,
+        'seo_keywords': f"ดู {name} สด, {name} ออนไลน์, ทีวีออนไลน์, ดูทีวีสด, TVHUB",
+        'logo_url': absolute_logo_url(channel_data.get('logo')),
+    }
+
+
+def related_channels(current_channel_id, limit=6):
+    channels = list(load_channels().values())
+    current_channel_id = (current_channel_id or '').lower()
+    items = [channel for channel in channels if channel.get('channel_id', '').lower() != current_channel_id]
+    return items[:limit]
+
+
+def public_url_for(endpoint, **values):
+    return f"{BASE_URL}{url_for(endpoint, **values)}"
+
+
 @app.context_processor
 def inject_site_context():
     return {
@@ -170,8 +216,14 @@ def live(channel):
         'current_source': selected_source,
         'embed_sources': embed_sources,
         'external_sources': external_sources,
+        'related_channels': related_channels(channel_data.get('channel_id')),
+        **build_live_seo(channel_data),
     })
-    return render_template('live.html', canonical_url=request.base_url, **template_data)
+    return render_template(
+        'live.html',
+        canonical_url=public_url_for('live', channel=channel_data.get('channel_id')),
+        **template_data
+    )
 
 # --- Legal/Info Pages ---
 @app.route('/privacy')
@@ -192,28 +244,44 @@ def sitemap():
     """Generates a sitemap.xml for SEO."""
     try:
         static_urls = [
-            url_for('homepage', _external=True),
-            url_for('privacy', _external=True),
-            url_for('terms', _external=True),
-            url_for('contact', _external=True),
-            url_for('horoscope_list', _external=True),
-            url_for('horoscope_daily_page', _external=True),
-            url_for('horoscope_birth_page', _external=True),
+            public_url_for('homepage'),
+            public_url_for('privacy'),
+            public_url_for('terms'),
+            public_url_for('contact'),
+            public_url_for('horoscope_list'),
+            public_url_for('horoscope_daily_page'),
+            public_url_for('horoscope_birth_page'),
         ]
 
         rows = dbutil.sql_fetchall("SELECT slug FROM movie_reviews ORDER BY id DESC") or []
-        movie_urls = [url_for('reviews.detail_movie', slug=row['slug'], _external=True) for row in rows]
+        movie_urls = [public_url_for('reviews.detail_movie', slug=row['slug']) for row in rows]
 
         zodiacs = list(ZODIAC_SIGNS.keys())
-        horoscope_urls = [url_for('horoscope_detail', sign=z, _external=True) for z in zodiacs]
+        horoscope_urls = [public_url_for('horoscope_detail', sign=z) for z in zodiacs]
+        live_urls = [
+            public_url_for('live', channel=channel.get('channel_id'))
+            for channel in load_channels().values()
+            if channel.get('channel_id')
+        ]
 
-        all_urls = set(static_urls + movie_urls + horoscope_urls)
+        all_urls = set(static_urls + movie_urls + horoscope_urls + live_urls)
 
         sitemap_xml = render_template('sitemap.xml', urls=all_urls)
         return Response(sitemap_xml, mimetype='application/xml')
     except Exception as e:
         logging.error(f"Error generating sitemap: {e}")
         return "Error generating sitemap.", 500
+
+
+@app.route('/robots.txt')
+def robots_txt():
+    body = "\n".join([
+        "User-agent: *",
+        "Allow: /",
+        f"Sitemap: {public_url_for('sitemap')}",
+        "",
+    ])
+    return Response(body, mimetype='text/plain')
 
 @app.route('/ads.txt')
 def ads_txt():

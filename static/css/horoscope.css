@@ -1,0 +1,365 @@
+:root {
+  --horo-bg: #09090b;
+  --horo-surface: #141417;
+  --horo-surface-2: #1d1d22;
+  --horo-line: rgba(255, 255, 255, 0.1);
+  --horo-text: #f7f7f8;
+  --horo-muted: #b8b8c2;
+  --horo-red: #d92332;
+  --horo-red-soft: rgba(217, 35, 50, 0.16);
+  --horo-gold: #f2c76b;
+  --horo-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body.horoscope-page {
+  background:
+    radial-gradient(circle at 8% 4%, rgba(217, 35, 50, 0.2), transparent 26rem),
+    radial-gradient(circle at 92% 12%, rgba(242, 199, 107, 0.12), transparent 24rem),
+    linear-gradient(180deg, #111114 0%, var(--horo-bg) 42%, #050506 100%);
+  color: var(--horo-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body.horoscope-page main {
+  flex: 1 0 auto;
+}
+
+body.horoscope-page footer {
+  margin-top: auto !important;
+}
+
+.horo-shell {
+  padding: 28px 0 56px;
+}
+
+.horo-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--horo-line);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, #151519 0%, #211015 48%, #5f1018 100%);
+  box-shadow: var(--horo-shadow);
+  padding: clamp(28px, 5vw, 64px);
+}
+
+.horo-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -34% auto;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(242, 199, 107, 0.25), transparent 68%);
+  pointer-events: none;
+}
+
+.horo-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.horo-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffd6d9;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.horo-title {
+  margin: 16px 0 12px;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.horo-lead {
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 760px;
+  font-size: 1.08rem;
+}
+
+.horo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.horo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 11px 16px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.horo-btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.horo-btn.primary {
+  background: linear-gradient(135deg, #ff3345, #b5101c);
+  border-color: transparent;
+  box-shadow: 0 14px 34px rgba(217, 35, 50, 0.28);
+}
+
+.horo-section {
+  margin-top: 34px;
+}
+
+.horo-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.horo-section-head h2 {
+  margin: 0;
+  font-weight: 900;
+}
+
+.horo-section-head p,
+.horo-muted {
+  color: var(--horo-muted) !important;
+}
+
+.horo-card {
+  height: 100%;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+    var(--horo-surface);
+  border: 1px solid var(--horo-line);
+  border-radius: 18px;
+  box-shadow: 0 16px 46px rgba(0, 0, 0, 0.22);
+  color: var(--horo-text);
+}
+
+a.horo-card {
+  display: flex;
+  text-decoration: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+a.horo-card:hover {
+  color: var(--horo-text);
+  transform: translateY(-4px);
+  border-color: rgba(217, 35, 50, 0.46);
+  background:
+    linear-gradient(145deg, rgba(217, 35, 50, 0.1), rgba(255, 255, 255, 0.025)),
+    var(--horo-surface);
+}
+
+.horo-card-body {
+  padding: 20px;
+  width: 100%;
+}
+
+.horo-icon {
+  width: 54px;
+  height: 54px;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  background: var(--horo-red-soft);
+  color: #ffb8be;
+  font-size: 1.6rem;
+}
+
+.horo-zodiac-mark {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(217, 35, 50, 0.22), rgba(242, 199, 107, 0.12));
+  color: #ffd8dc;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.horo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(242, 199, 107, 0.32);
+  background: rgba(242, 199, 107, 0.1);
+  color: #ffe3a6;
+  font-weight: 800;
+  padding: 8px 12px;
+  margin: 0 6px 8px 0;
+}
+
+.horo-panel {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.012)),
+    var(--horo-surface);
+  border: 1px solid var(--horo-line);
+  border-radius: 22px;
+  padding: clamp(18px, 3vw, 28px);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.horo-prediction {
+  background: var(--horo-surface-2);
+  border: 1px solid var(--horo-line);
+  border-left: 4px solid var(--horo-red);
+  border-radius: 16px;
+  padding: 18px;
+  color: #dedee6;
+  height: 100%;
+}
+
+.horo-prediction.work {
+  border-left-color: #4cc9f0;
+}
+
+.horo-prediction.finance {
+  border-left-color: #48c774;
+}
+
+.horo-prediction.love {
+  border-left-color: #ff4d6d;
+}
+
+.horo-prediction.health {
+  border-left-color: #f2c76b;
+}
+
+.horo-prediction h5 {
+  color: #fff;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.horo-tabs.nav-pills {
+  gap: 8px;
+}
+
+.horo-tabs.nav-pills .nav-link {
+  border-radius: 999px;
+  color: #e9e9ee;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 800;
+}
+
+.horo-tabs.nav-pills .nav-link.active {
+  background: linear-gradient(135deg, #ff3345, #b5101c);
+  border-color: transparent;
+  box-shadow: 0 10px 28px rgba(217, 35, 50, 0.3);
+}
+
+.horo-loading {
+  text-align: center;
+  padding: 38px 18px;
+}
+
+.horo-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid rgba(255, 255, 255, 0.15);
+  border-top-color: var(--horo-red);
+  border-radius: 50%;
+  animation: horo-spin 0.85s linear infinite;
+  margin: 0 auto 14px;
+}
+
+@keyframes horo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.horo-form-control {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.horo-form-control:focus {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(217, 35, 50, 0.62);
+  box-shadow: 0 0 0 0.25rem rgba(217, 35, 50, 0.16);
+}
+
+.horo-quick-date {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+}
+
+.horo-quick-date:hover {
+  background: var(--horo-red-soft);
+  border-color: rgba(217, 35, 50, 0.44);
+}
+
+.horo-meta {
+  background: rgba(217, 35, 50, 0.12);
+  border: 1px solid rgba(217, 35, 50, 0.25);
+  border-radius: 16px;
+  padding: 14px;
+  min-height: 100%;
+}
+
+@media (max-width: 767.98px) {
+  body.horoscope-page {
+    overflow-x: hidden;
+  }
+
+  body.horoscope-page .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .horo-shell {
+    padding-top: 18px;
+  }
+
+  .horo-hero {
+    border-radius: 20px;
+  }
+
+  .horo-actions .horo-btn {
+    width: 100%;
+  }
+
+  .horo-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
